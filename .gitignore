@@ -1,0 +1,5 @@
+qemu.log
+*.o
+*.d
+*.a
+*.so

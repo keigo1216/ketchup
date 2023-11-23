@@ -1,11 +1,13 @@
 # Clangのパス
 CLANG := /usr/local/opt/llvm/bin/clang
+OBJDUMP=/usr/local/opt/llvm/bin/llvm-objdump
 
 # クロスコンパイルのターゲットアーキテクチャ（OSなし）
 TARGET_ARCH := aarch64-none-elf
+TARGET_MATCHNE := armv8-a
 
 # コンパイルオプション
-CFLAGS := -Wall -O2 --target=$(TARGET_ARCH) -ffreestanding -nostdinc -nostdlib
+CFLAGS := -std=c11 -Wall -O2 -g3 --target=$(TARGET_ARCH) -march=$(TARGET_MATCHNE) -ffreestanding -nostdlib
 
 # ソースファイル
 SRC := kernel.c
@@ -20,19 +22,23 @@ FW_DIR := ./bcm2710-rpi-3-b-plus.dtb
 
 # QEMUの実行
 QEMU := qemu-system-aarch64
-MEMORY := 1024
+MEMORY := 512
+MATHINE := raspi3ap
 
 CPU := cortex-a53
 
 # QEMUの実行オプション
-QEMU_OPTS := -M virt -cpu $(CPU) -m $(MEMORY) -nographic -kernel $(KERNEL) -dtb $(FW_DIR)
+QEMU_OPTS := -M $(MATHINE) -cpu $(CPU) -m $(MEMORY) -nographic -kernel $(KERNEL) -dtb $(FW_DIR) -D qemu.log -serial mon:stdio --no-reboot -smp 4
 
 # デフォルトターゲット
-all: $(KERNEL)
+all: clean $(KERNEL) dump run 
 
 # ターゲットのビルド
 $(KERNEL): $(SRC)
-	$(CLANG) $(CFLAGS) -Wl,-Tkernel.ld -o kernel.elf kernel.c
+	$(CLANG) $(CFLAGS) -Wl,-Tkernel.ld -o kernel.elf kernel.c common.c
+# dump
+dump: $(KERNEL)
+	$(OBJDUMP) -d kernel.elf >> kernel.dump
 
 # QEMUでのテスト実行
 run: $(KERNEL)
@@ -40,6 +46,6 @@ run: $(KERNEL)
 
 # クリーンアップ
 clean:
-	rm -f $(OBJ) $(KERNEL)
+	rm -f $(OBJ) $(KERNEL) kernel.dump
 
 .PHONY: all run clean
