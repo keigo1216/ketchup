@@ -40,6 +40,10 @@ $(KERNEL): $(SRC)
 dump: $(KERNEL)
 	$(OBJDUMP) -d kernel.elf >> kernel.dump
 
+# github actionsでのテスト実行
+test: $(SRC)
+	clang $(CFLAGS) -Wl,-Tkernel.ld -o kernel.elf kernel.c common.c
+
 # QEMUでのテスト実行
 run: $(KERNEL)
 	$(QEMU) $(QEMU_OPTS)
