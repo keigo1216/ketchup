@@ -6,13 +6,15 @@ OBJDUMP=/usr/local/opt/llvm/bin/llvm-objdump
 TARGET_ARCH := aarch64-none-elf
 TARGET_MATCHNE := armv8-a
 
-# コンパイルオプション
-CFLAGS := -std=c11 -Wall -O2 -g3 --target=$(TARGET_ARCH) -march=$(TARGET_MATCHNE) -ffreestanding -nostdlib
-
 # ソースファイル
+SRC_DIR := kernel common
+SRCS := $(wildcard $(addsuffix /*.c, $(SRC_DIR)))
 SRC := kernel/kernel.c
+OBJS := $(SRCS:.c=.o)
+INCLUDES := $(foreach d, $(SRC_DIR), -I$d)
 
-OBJ := $(SRC:.c=.o)
+# コンパイルオプション
+CFLAGS := -std=c11 -Wall -O2 -g3 --target=$(TARGET_ARCH) -march=$(TARGET_MATCHNE) -ffreestanding -nostdlib -I $(INCLUDES)
 
 # 出力ファイル（実行可能バイナリ）
 KERNEL := kernel.elf
@@ -31,18 +33,21 @@ CPU := cortex-a53
 QEMU_OPTS := -M $(MATHINE) -cpu $(CPU) -m $(MEMORY) -nographic -kernel $(KERNEL) -dtb $(FW_DIR) -D qemu.log -serial mon:stdio --no-reboot -smp 4
 
 # デフォルトターゲット
-all: $(KERNEL) dump
+all: clean $(KERNEL) dump
+
+%o: %c
+	$(CLANG) $(CFLAGS) -c $< -o $@
 
 # ターゲットのビルド
-$(KERNEL): $(SRC)
-	$(CLANG) $(CFLAGS) -Wl,-Tkernel/kernel.ld -o kernel.elf kernel/kernel.c common/common.c kernel/print.c -I common/.
+$(KERNEL): $(OBJS)
+	$(CLANG) $(CFLAGS) -Wl,-Tkernel/kernel.ld -o $@ $^
 # dump
 dump: $(KERNEL)
 	$(OBJDUMP) -d kernel.elf >> kernel.dump
 
 # github actionsでのテスト実行
-test: $(SRC)
-	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -o kernel.elf kernel/kernel.c common/common.c kernel/print.c -I common/.
+test: $(OBJS)
+	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -o $@ $^
 
 # QEMUでのテスト実行
 run: $(KERNEL)
@@ -50,6 +55,6 @@ run: $(KERNEL)
 
 # クリーンアップ
 clean:
-	rm -f $(OBJ) $(KERNEL) kernel.dump
+	rm -f $(OBJS) $(KERNEL) kernel.dump
 
 .PHONY: all run clean
