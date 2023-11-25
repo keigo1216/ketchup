@@ -46,8 +46,8 @@ dump: $(KERNEL)
 	$(OBJDUMP) -d kernel.elf >> kernel.dump
 
 # github actionsでのテスト実行
-test: $(OBJS)
-	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -o $(KERNEL) $^
+test: $(SRC)
+	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -o kernel.elf kernel/kernel.c common/common.c kernel/print.c -I common/.
 
 # QEMUでのテスト実行
 run: $(KERNEL)
