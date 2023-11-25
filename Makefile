@@ -14,7 +14,7 @@ OBJS := $(SRCS:.c=.o)
 INCLUDES := $(foreach d, $(SRC_DIR), -I$d)
 
 # コンパイルオプション
-CFLAGS := -std=c11 -Wall -O2 -g3 --target=$(TARGET_ARCH) -march=$(TARGET_MATCHNE) -ffreestanding -nostdlib -I $(INCLUDES)
+CFLAGS := -std=c11 -Wall -O2 -g3 --target=$(TARGET_ARCH) -march=$(TARGET_MATCHNE) -ffreestanding -nostdlib $(INCLUDES)
 
 # 出力ファイル（実行可能バイナリ）
 KERNEL := kernel.elf
@@ -47,7 +47,7 @@ dump: $(KERNEL)
 
 # github actionsでのテスト実行
 test: $(OBJS)
-	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -o $@ $^
+	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -o $(KERNEL) $^
 
 # QEMUでのテスト実行
 run: $(KERNEL)
