@@ -31,7 +31,7 @@ CPU := cortex-a53
 QEMU_OPTS := -M $(MATHINE) -cpu $(CPU) -m $(MEMORY) -nographic -kernel $(KERNEL) -dtb $(FW_DIR) -D qemu.log -serial mon:stdio --no-reboot -smp 4
 
 # デフォルトターゲット
-all: clean $(KERNEL) dump run 
+all: clean $(KERNEL) dump
 
 # ターゲットのビルド
 $(KERNEL): $(SRC)
