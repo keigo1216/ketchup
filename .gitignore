@@ -4,3 +4,4 @@ qemu.log
 *.a
 *.so
 *.dump
+*.elf
