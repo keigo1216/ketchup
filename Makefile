@@ -10,7 +10,7 @@ TARGET_MATCHNE := armv8-a
 CFLAGS := -std=c11 -Wall -O2 -g3 --target=$(TARGET_ARCH) -march=$(TARGET_MATCHNE) -ffreestanding -nostdlib
 
 # ソースファイル
-SRC := kernel.c
+SRC := kernel/kernel.c
 
 OBJ := $(SRC:.c=.o)
 
@@ -31,18 +31,18 @@ CPU := cortex-a53
 QEMU_OPTS := -M $(MATHINE) -cpu $(CPU) -m $(MEMORY) -nographic -kernel $(KERNEL) -dtb $(FW_DIR) -D qemu.log -serial mon:stdio --no-reboot -smp 4
 
 # デフォルトターゲット
-all: clean $(KERNEL) dump
+all: $(KERNEL) dump
 
 # ターゲットのビルド
 $(KERNEL): $(SRC)
-	$(CLANG) $(CFLAGS) -Wl,-Tkernel.ld -o kernel.elf kernel.c common.c
+	$(CLANG) $(CFLAGS) -Wl,-Tkernel/kernel.ld -o kernel.elf kernel/kernel.c common/common.c kernel/print.c -I common/.
 # dump
 dump: $(KERNEL)
 	$(OBJDUMP) -d kernel.elf >> kernel.dump
 
 # github actionsでのテスト実行
 test: $(SRC)
-	clang $(CFLAGS) -Wl,-Tkernel.ld -o kernel.elf kernel.c common.c
+	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -o kernel.elf kernel/kernel.c common/common.c kernel/print.c -I common/.
 
 # QEMUでのテスト実行
 run: $(KERNEL)
