@@ -46,7 +46,7 @@ dump: $(KERNEL)
 	$(OBJDUMP) -d kernel.elf >> kernel.dump
 
 # github actionsでのテスト実行
-test: $(SRCS)
+test: $(OBJS)
 	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -o kernel.elf $^
 
 # QEMUでのテスト実行
