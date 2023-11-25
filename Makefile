@@ -31,7 +31,7 @@ CPU := cortex-a53
 QEMU_OPTS := -M $(MATHINE) -cpu $(CPU) -m $(MEMORY) -nographic -kernel $(KERNEL) -dtb $(FW_DIR) -D qemu.log -serial mon:stdio --no-reboot -smp 4
 
 # デフォルトターゲット
-all: clean $(KERNEL) dump run 
+all: clean $(KERNEL) dump
 
 # ターゲットのビルド
 $(KERNEL): $(SRC)
@@ -39,6 +39,10 @@ $(KERNEL): $(SRC)
 # dump
 dump: $(KERNEL)
 	$(OBJDUMP) -d kernel.elf >> kernel.dump
+
+# github actionsでのテスト実行
+test: $(SRC)
+	clang $(CFLAGS) -Wl,-Tkernel.ld -o kernel.elf kernel.c common.c
 
 # QEMUでのテスト実行
 run: $(KERNEL)
