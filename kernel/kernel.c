@@ -1,6 +1,4 @@
-#include "common.h"
-#include "print.h"
-#include "asm.h"
+#include "kernel.h"
 
 extern char __bss[], __bss_end[], __stack_top[];
 
@@ -8,6 +6,13 @@ void kernel_main() {
     unsigned int core_id = get_core_id();
     if (core_id == 0) {
         printf("Hello, world!%d\n", 123);
+        if (!strcmp("abc", "abc")) {
+            printf("strcmp OK\n");
+        } else {
+            printf("strcmp NG\n");
+        }
+        PANIC("booted!");
+        PANIC("unreachable");
     } else {
         while(1) {}
     }
