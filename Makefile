@@ -48,7 +48,7 @@ dump: $(KERNEL)
 
 # github actionsでのテスト実行
 test: $(SRCS) $(ASM)
-	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -Map=kernel.map -o kernel.elf $^
+	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -Wl,-Map=kernel.map -o kernel.elf $^
 
 # QEMUでのテスト実行
 run: $(KERNEL)
