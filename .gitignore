@@ -5,3 +5,4 @@ qemu.log
 *.so
 *.dump
 *.elf
+*.map

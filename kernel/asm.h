@@ -8,3 +8,15 @@ static inline uint64_t get_core_id(void) {
     );
     return core_id & 0x3;
 }
+
+uint64_t get_current_el() {
+    uint64_t el;
+    __asm__ (
+        "mrs %0, CurrentEL\n\t"
+        "lsr %0, %0, #2"
+        : "=r" (el) /* 出力オペランド */
+        : /* 入力オペランドはなし */
+        : /* 破壊されるレジスタはなし */
+    );
+    return el;
+}
