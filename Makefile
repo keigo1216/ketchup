@@ -9,6 +9,7 @@ TARGET_MATCHNE := armv8-a
 # ソースファイル
 SRC_DIR := kernel common
 SRCS := $(wildcard $(addsuffix /*.c, $(SRC_DIR)))
+ASM := $(wildcard $(addsuffix /*.S, $(SRC_DIR)))
 SRC := kernel/kernel.c
 OBJS := $(SRCS:.c=.o)
 INCLUDES := $(foreach d, $(SRC_DIR), -I$d)
@@ -39,14 +40,14 @@ all: clean $(KERNEL) dump
 	$(CLANG) $(CFLAGS) -c $< -o $@
 
 # ターゲットのビルド
-$(KERNEL): $(OBJS)
-	$(CLANG) $(CFLAGS) -Wl,-Tkernel/kernel.ld -Wl,-Map=kernel.map -o $@ $^ kernel/trap.S kernel/boot.S
+$(KERNEL): $(OBJS) $(ASM)
+	$(CLANG) $(CFLAGS) -Wl,-Tkernel/kernel.ld -Wl,-Map=kernel.map -o $@ $^
 # dump
 dump: $(KERNEL)
 	$(OBJDUMP) -d kernel.elf >> kernel.dump
 
 # github actionsでのテスト実行
-test: $(SRCS)
+test: $(SRCS) $(ASM)
 	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -Map=kernel.map -o kernel.elf $^
 
 # QEMUでのテスト実行

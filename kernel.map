@@ -1,7 +1,7 @@
              VMA              LMA     Size Align Out     In      Symbol
                0                0    80000     1 . = 0x80000
            80000            80000     10a0  2048 .text
-           80000            80000       a8     8         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/boot-21463f.o:(.text.boot)
+           80000            80000       a8     8         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/boot-bc4c07.o:(.text.boot)
            80000            80000        0     1                 $x.0
            80000            80000        0     1                 boot
            8003c            8003c        0     1                 start_el2
@@ -24,12 +24,12 @@
            8056c            8056c       c8     1                 memcpy
            80634            80634       28     1                 strcpy
            8065c            8065c       34     1                 strcmp
-           80800            80800      8a0  2048         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/trap-1793fb.o:(.text)
+           80690            80690        0     4         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/boot-bc4c07.o:(.text)
+           80800            80800      8a0  2048         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/trap-b4c61a.o:(.text)
            80800            80800        0     1                 $x.0
            80800            80800        0     1                 exception_vector
            81000            81000        0     1                 exception_common
            8109c            8109c        0     1                 interrupt_common
-           810a0            810a0        0     4         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/boot-21463f.o:(.text)
            810a0            810a0       a6    16 .rodata
            810a0            810a0       a6     1         <internal>:(.rodata.str1.1)
            81150            81150        0    16 .bss
@@ -54,10 +54,10 @@
              15b              15b        0     1                 $d.3
              2f1              2f1       91     1         common/common.o:(.debug_abbrev)
              2f1              2f1        0     1                 $d.2
-             382              382       21     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/trap-1793fb.o:(.debug_abbrev)
-             382              382        0     1                 $d.2
-             3a3              3a3       21     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/boot-21463f.o:(.debug_abbrev)
-             3a3              3a3        0     1                 $d.3
+             382              382       21     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/boot-bc4c07.o:(.debug_abbrev)
+             382              382        0     1                 $d.3
+             3a3              3a3       21     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/trap-b4c61a.o:(.debug_abbrev)
+             3a3              3a3        0     1                 $d.2
                0                0      731     1 .debug_info
                0                0      225     1         kernel/kernel.o:(.debug_info)
                0                0        0     1                 $d.4
@@ -65,10 +65,10 @@
              225              225        0     1                 $d.4
              451              451      13e     1         common/common.o:(.debug_info)
              451              451        0     1                 $d.3
-             58f              58f       de     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/trap-1793fb.o:(.debug_info)
-             58f              58f        0     1                 $d.3
-             66d              66d       c4     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/boot-21463f.o:(.debug_info)
-             66d              66d        0     1                 $d.4
+             58f              58f       c4     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/boot-bc4c07.o:(.debug_info)
+             58f              58f        0     1                 $d.4
+             653              653       de     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/trap-b4c61a.o:(.debug_info)
+             653              653        0     1                 $d.3
                0                0      144     1 .debug_str_offsets
                0                0       58     1         kernel/kernel.o:(.debug_str_offsets)
                0                0        0     1                 $d.5
@@ -101,20 +101,20 @@
               ec               ec        0     1                 $d.11
              353              353      10d     1         common/common.o:(.debug_line)
              353              353        0     1                 $d.9
-             460              460       ab     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/trap-1793fb.o:(.debug_line)
-             460              460        0     1                 $d.4
-             50b              50b       64     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/boot-21463f.o:(.debug_line)
-             50b              50b        0     1                 $d.5
+             460              460       64     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/boot-bc4c07.o:(.debug_line)
+             460              460        0     1                 $d.5
+             4c4              4c4       ab     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/trap-b4c61a.o:(.debug_line)
+             4c4              4c4        0     1                 $d.4
                0                0       98     1 .debug_line_str
                0                0       98     1         <internal>:(.debug_line_str)
                0                0       9d     1 .debug_rnglists
                0                0       9d     1         kernel/print.o:(.debug_rnglists)
                0                0        0     1                 $d.5
                0                0       60     1 .debug_aranges
-               0                0       30     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/trap-1793fb.o:(.debug_aranges)
-               0                0        0     1                 $d.1
-              30               30       30     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/boot-21463f.o:(.debug_aranges)
-              30               30        0     1                 $d.2
+               0                0       30     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/boot-bc4c07.o:(.debug_aranges)
+               0                0        0     1                 $d.2
+              30               30       30     1         /var/folders/76/9vw181ys3s3cd4q5qgxpx_ph0000gn/T/trap-b4c61a.o:(.debug_aranges)
+              30               30        0     1                 $d.1
                0                0      6f0     8 .symtab
                0                0      6f0     8         <internal>:(.symtab)
                0                0       d3     1 .shstrtab
