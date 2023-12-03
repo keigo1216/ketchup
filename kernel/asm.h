@@ -20,3 +20,30 @@ uint64_t get_current_el() {
     );
     return el;
 }
+
+uint64_t get_esr_el2(void) {
+    uint64_t esr;
+    __asm__ __volatile__ (
+        "mrs %0, esr_el2"
+        : "=r" (esr)
+    );
+    return esr;
+}
+
+uint64_t get_far_el1(void) {
+    uint64_t far;
+    __asm__ __volatile__ (
+        "mrs %0, far_el1"
+        : "=r" (far)
+    );
+    return far;
+}
+
+uint64_t get_elr_el1(void) {
+    uint64_t elr;
+    __asm__ __volatile__ (
+        "mrs %0, elr_el1"
+        : "=r" (elr)
+    );
+    return elr;
+}
