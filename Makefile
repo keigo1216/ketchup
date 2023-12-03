@@ -40,14 +40,14 @@ all: clean $(KERNEL) dump
 
 # ターゲットのビルド
 $(KERNEL): $(OBJS)
-	$(CLANG) $(CFLAGS) -Wl,-Tkernel/kernel.ld -o $@ $^
+	$(CLANG) $(CFLAGS) -Wl,-Tkernel/kernel.ld -Wl,-Map=kernel.map -o $@ $^ kernel/trap.S kernel/boot.S
 # dump
 dump: $(KERNEL)
 	$(OBJDUMP) -d kernel.elf >> kernel.dump
 
 # github actionsでのテスト実行
 test: $(SRCS)
-	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -o kernel.elf $^
+	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -Map=kernel.map -o kernel.elf $^
 
 # QEMUでのテスト実行
 run: $(KERNEL)

@@ -8,24 +8,24 @@ SECTIONS {
         *(.text .text.*);
     }
 
-    .rodata : ALIGN(8) {
+    .rodata : ALIGN(16) {
         *(.rodata .rodata.*);
     }
 
-    .data : ALIGN(8) {
+    .data : ALIGN(16) {
         *(.data .data.*);
     }
 
-    .bss : ALIGN(8) {
+    .bss : ALIGN(16) {
         __bss = .;
         *(.bss .bss.* .sbss .sbss.*);
         __bss_end = .;
     }
 
-    . = ALIGN(8);
-    . += 1024 * 1024; /* 128KB */
+    . = ALIGN(16);
+    . += 128 * 1024; /* 128KB */
     __stack_top = .;
 
-    . = ALIGN(8);
+    . = ALIGN(16);
     end = .;  /* カーネルイメージの終わりを示すシンボル */
 }

@@ -1,33 +1,35 @@
 #include "kernel.h"
 
-extern char __bss[], __bss_end[], __stack_top[];
+extern char __bss[], __bss_end[], __stack_top_el2[], __stack_top_el1[];
+
+void handle_trap(void) {
+    PANIC("handle_trap");
+}
+
+void handle_syscall(void) {
+    PANIC("handle_syscall");
+}
 
 void kernel_main() {
     unsigned int core_id = get_core_id();
     if (core_id == 0) {
+        // clear bss
+        memset(__bss, 0, __bss_end - __bss);
+
+        printf("mode: %d\n", get_current_el());
         printf("Hello, world!%d\n", 123);
         if (!strcmp("abc", "abc")) {
             printf("strcmp OK\n");
         } else {
             printf("strcmp NG\n");
         }
+
+        __asm__ __volatile__ ("svc #0");
+        
         PANIC("booted!");
         PANIC("unreachable");
     } else {
         while(1) {}
     }
     while (1) {}
-}
-
-__attribute__((section(".text.boot")))
-__attribute__((naked))
-void boot(void) {
-    __asm__ __volatile__(
-        "ldr X8, =__stack_top\n"
-        "mov sp, X8\n"
-        "bl kernel_main\n"
-        :
-        :
-        : "r0"
-    );
 }
