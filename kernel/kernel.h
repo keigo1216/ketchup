@@ -1,12 +1,7 @@
 #include "common.h"
 #include "asm.h"
 #include "print.h"
-
-#define PANIC(fmt, ...) \
-    do { \
-        printf("PANIC: %s:%d: " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__); \
-        while(1) {} \
-    } while(0)
+#include "alloc.h"
 
 #define WRITE_CSR(reg, value)                                                  \
     __asm__ __volatile__("msr " #reg ", %0" ::"r"(value))
