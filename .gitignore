@@ -6,3 +6,4 @@ qemu.log
 *.dump
 *.elf
 *.map
+*.nm
