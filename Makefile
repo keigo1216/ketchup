@@ -1,6 +1,7 @@
 # Clangのパス
 CLANG := /usr/local/opt/llvm/bin/clang
-OBJDUMP=/usr/local/opt/llvm/bin/llvm-objdump
+OBJDUMP :=/usr/local/opt/llvm/bin/llvm-objdump
+NM := /usr/local/opt/llvm/bin/llvm-nm
 
 # クロスコンパイルのターゲットアーキテクチャ（OSなし）
 TARGET_ARCH := aarch64-none-elf
@@ -34,7 +35,7 @@ CPU := cortex-a53
 QEMU_OPTS := -M $(MATHINE) -cpu $(CPU) -m $(MEMORY) -nographic -kernel $(KERNEL) -dtb $(FW_DIR) -D qemu.log -serial mon:stdio --no-reboot -smp 4
 
 # デフォルトターゲット
-all: clean $(KERNEL) dump
+all: clean $(KERNEL) dump nm
 
 %o: %c
 	$(CLANG) $(CFLAGS) -c $< -o $@
@@ -45,6 +46,9 @@ $(KERNEL): $(OBJS) $(ASM)
 # dump
 dump: $(KERNEL)
 	$(OBJDUMP) -d kernel.elf >> kernel.dump
+
+nm: $(KERNEL)
+	$(NM) kernel.elf >> kernel.nm
 
 # github actionsでのテスト実行
 test: $(SRCS) $(ASM)
