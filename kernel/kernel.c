@@ -11,7 +11,7 @@ void proc_a_entry(void) {
     printf("sp register: %x\n", get_sp());
     while (1) {
         putchar('A');
-        switch_context(&proc_a->sp, &proc_b->sp);
+        yeild();
 
         for (int i = 0; i < 1000000; i++) {
             __asm__ __volatile__("nop");
@@ -25,7 +25,7 @@ void proc_b_entry(void) {
     printf("sp register: %x\n", get_sp());
     while (1) {
         putchar('B');
-        switch_context(&proc_b->sp, &proc_a->sp);
+        yeild();
 
         for (int i = 0; i < 1000000; i++) {
             __asm__ __volatile__("nop");
@@ -62,6 +62,11 @@ void kernel_main() {
         printf("current el = %d\n", get_current_el());
         memset(__bss, 0, __bss_end - __bss);
 
+        // アイドルプロセスの生成
+        idle_proc = create_process((uint64_t) NULL);
+        idle_proc->pid = -1;
+        current_proc = idle_proc;
+
         // paddr_t paddr0 = alloc_pages(2);
         // paddr_t paddr1 = alloc_pages(1);
         // printf("alloc_pages test: paddr0=%x\n", paddr0);
@@ -69,7 +74,7 @@ void kernel_main() {
 
         proc_a = create_process((uint64_t) proc_a_entry);
         proc_b = create_process((uint64_t) proc_b_entry);
-        proc_a_entry();
+        yeild();
 
         PANIC("booted!");
         PANIC("unreachable");

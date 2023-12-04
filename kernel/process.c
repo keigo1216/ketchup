@@ -1,6 +1,30 @@
 #include "process.h"
 
 struct process procs[PROCS_MAX];
+struct process *current_proc;
+struct process *idle_proc;
+
+void yeild(void) {
+    // 実行待ちになっているプロセスを探す
+    struct process *next_proc = idle_proc;
+    for (int i = 0; i < PROCS_MAX; i++) {
+        struct process *proc = &procs[(current_proc->pid + i) % PROCS_MAX];
+        if (proc->state == PROC_RUNNABLE && proc->pid > 0) {
+            next_proc = proc;
+            break;
+        }
+    }
+    
+    // 実行待ちのプロセスが存在しなかったら譲らずに実行を続ける
+    if (next_proc == current_proc) {
+        return;
+    }
+
+    // コンテキストスイッチ
+    struct process *prev_proc = current_proc;
+    current_proc = next_proc;
+    switch_context(&prev_proc->sp, &next_proc->sp);
+}
 
 __attribute__((naked))
 void switch_context (uint64_t *prev_sp, uint64_t *next_sp) {
