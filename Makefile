@@ -32,7 +32,7 @@ MATHINE := raspi3ap
 CPU := cortex-a53
 
 # QEMUの実行オプション
-QEMU_OPTS := -M $(MATHINE) -cpu $(CPU) -m $(MEMORY) -nographic -kernel $(KERNEL) -dtb $(FW_DIR) -D qemu.log -serial mon:stdio --no-reboot -smp 4
+QEMU_OPTS := -M $(MATHINE) -cpu $(CPU) -m $(MEMORY) -nographic -kernel $(KERNEL) -dtb $(FW_DIR) -D qemu.log -serial mon:stdio --no-reboot -smp 4 -d in_asm
 
 # デフォルトターゲット
 all: clean $(KERNEL) dump nm

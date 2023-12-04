@@ -15,7 +15,7 @@ boot:
     msr   SCR_EL3, x0
 
     // Set PC of start_el2
-    ldr   x0, =kernel_main
+    ldr   x0, =start_el2
     msr   elr_el3, x0
 
     mov   x0, PSR_A_BIT | PSR_I_BIT | PSR_F_BIT | PSR_MODE_EL2h
@@ -49,6 +49,9 @@ start_el1:
     mrs x0, daif       // 現在の割り込みマスクを取得
     bic x0, x0, #0xC0  // IビットとFビットをクリアして、IRQとFIQ割り込みを有効化
     msr daif, x0
+
+    ldr   x0, =__stack_top_user
+    msr   SP_EL0, x0
 
     mrs   x0, CPACR_EL1         // CPACR_EL1レジスタの現在の値を読み込む
     orr   x0, x0, #(0b11 << 20) // CPACR_EL1の浮動小数点とSIMDのアクセスを有効にする

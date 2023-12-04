@@ -2,6 +2,7 @@
 #include "asm.h"
 #include "print.h"
 #include "alloc.h"
+#include "process.h"
 
 #define WRITE_CSR(reg, value)                                                  \
     __asm__ __volatile__("msr " #reg ", %0" ::"r"(value))
