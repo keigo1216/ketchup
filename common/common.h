@@ -27,6 +27,10 @@ typedef uint64_t vaddr_t;
 
 #define PAGE_SIZE 4096
 
+#define PROCS_MAX 8
+#define PROC_UNUSED 0
+#define PROC_RUNNABLE 1
+
 void *memset(void *buf, char c, size_t n);
 void *memcpy(void *dst, const void *src, size_t n);
 char *strcpy(char *dst, const char *src);

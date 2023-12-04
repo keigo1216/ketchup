@@ -47,3 +47,21 @@ uint64_t get_elr_el1(void) {
     );
     return elr;
 }
+
+uint64_t get_sp(void) {
+    uint64_t sp;
+    __asm__ __volatile__ (
+        "mov %0, sp"
+        : "=r" (sp)
+    );
+    return sp;
+}
+
+void set_sp(uint64_t sp) {
+    __asm__ __volatile__ (
+        "mov sp, %0"
+        : /* 出力オペランドはなし */
+        : "r" (sp) /* 入力オペランド */
+        : /* 破壊されるレジスタはなし */
+    );
+}

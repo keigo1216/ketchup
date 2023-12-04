@@ -26,6 +26,10 @@ SECTIONS {
     . += 128 * 1024; /* 128KB */
     __stack_top = .;
 
+    . = ALIGN(16);
+    . += 128 * 1024; /* 128KB */
+    __stack_top_user = .;
+
     . = ALIGN(4096);
     __free_ram = .;
     . += 64 * 1024 * 1024;
