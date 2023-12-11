@@ -18,10 +18,6 @@ boot:
     ldr     x4, =__stack_top
     mov     sp, x4
 
-    // CPU1のみ, ページテーブルの初期化処理を実行する
-    mrs  x1, mpidr_el1
-    and  x1, x1, #3
-
 EL3_TO_EL1:
     // ELR_EL3
     ldr     x0, =el1_mode
@@ -32,14 +28,13 @@ EL3_TO_EL1:
 
     mov     x24, sp
     msr     SP_EL1, x24
-    mov x10, x0
     eret
 
 el1_mode:
     ldr x10, =__stack_top
     mov sp, x10
     
-    ldr   x0, =__stack_top_user
+    ldr   x0, =__stack_top
     msr   SP_EL0, x0
 
     mrs   x0, CPACR_EL1         // CPACR_EL1レジスタの現在の値を読み込む
