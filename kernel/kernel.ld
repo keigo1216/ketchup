@@ -1,5 +1,7 @@
 ENTRY(boot)
 
+LMA_OFFSET = 0xffff000000000000;
+
 MEMORY {
     boot_ram (rwx): ORIGIN = 0x0000000000080000, LENGTH = 0x0001000
     ram (rwx):      ORIGIN = 0xffff000000081000, LENGTH = 0x2fff000
@@ -7,8 +9,6 @@ MEMORY {
 }
 
 SECTIONS {
-    . = 0x80000;  /* カーネルのロードアドレス */
-
    .boot :{
         KEEP(*(.text.boot));
     } > boot_ram
@@ -33,6 +33,10 @@ SECTIONS {
         . = ALIGN(8);
         . += 4 * 1024; /* 4KB */
         __stack_top = .;
+
+        . = ALIGN(4096);
+        __kernel_page = . - LMA_OFFSET;
+        . += 4 * 1024 + 4 * 1024;
 
         . = ALIGN(4096);
         __free_ram = .;
