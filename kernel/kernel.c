@@ -7,8 +7,6 @@ struct process *proc_b;
 
 void proc_a_entry(void) {
     printf("starting proc_a\n");
-    printf("sp address: %x\n", &proc_a->sp);
-    printf("sp register: %x\n", get_sp());
     while (1) {
         putchar('A');
         yeild();
@@ -21,8 +19,6 @@ void proc_a_entry(void) {
 
 void proc_b_entry(void) {
     printf("starting proc_b\n");
-    printf("sp address: %x\n", proc_b->sp);
-    printf("sp register: %x\n", get_sp());
     while (1) {
         putchar('B');
         yeild();
@@ -62,6 +58,10 @@ void kernel_main() {
         printf("current el = %d\n", get_current_el());
         memset(__bss, 0, __bss_end - __bss);
 
+        // Test accsess to free ram using virtual address
+        printf("__kernel_page: %x\n", ((uint64_t *)(0x0000000000094000))[0]);
+        printf("__kernel_page: %x\n", ((uint64_t *)(0xffff000000094000))[0]);
+
         // アイドルプロセスの生成
         idle_proc = create_process((uint64_t) NULL);
         idle_proc->pid = -1;
@@ -74,7 +74,7 @@ void kernel_main() {
 
         proc_a = create_process((uint64_t) proc_a_entry);
         proc_b = create_process((uint64_t) proc_b_entry);
-        yeild();
+        // yeild();
 
         PANIC("booted!");
         PANIC("unreachable");

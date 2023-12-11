@@ -25,4 +25,19 @@
 /* HCR_EL2 bits */
 #define HCR_EL2_RW 0x80000000
 
+/* TCR_EL1 bits */
+#define TCR_ELL1_REGION_48bit (((64 - 48) << 0) | ((64 - 48) << 16))
+#define TCR_EL1_PAGESIZE_4KB ((0b00 << 14) |  (0b10 << 30))
+
+/* MAIR_EL1 bits */
+#define MAIR_EL1_DEVICE_nGnRnE 0x00
+#define MAIR_EL1_NORMAL_NOCACHE 0b01000100
+#define MAIR_EL1_IDX_DEVICE_nGnRnE 0
+#define MAIR__EL1_IDX_NORMAL_NOCACHE 1
+
+/* PD bits */
+#define PD_TABLE 0b11
+#define PD_BLOCK 0b01
+#define PD_ACCESS (1 << 10)
+
 #endif // __ARMV8DEF_H__
