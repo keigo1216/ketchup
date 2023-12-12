@@ -38,6 +38,15 @@
 /* PD bits */
 #define PD_TABLE 0b11
 #define PD_BLOCK 0b01
-#define PD_ACCESS (1 << 10)
+#define PD_ACCESS (1 << 10) /* for page fault, not control access (user or kernel) */
+
+/* PAGE Entry bits */
+#define PAGE_V (1 << 0)
+#define PAGE_ENTRY (0b11 << 0)
+#define PAGE_R (1 << 7)
+#define PAGE_RW (0 << 7)
+#define PAGE_ACCESS (1 << 6)
+#define PAGE_NOACCESS (0 << 6)
+#define PAGE_NEXT_TABLE_ADDR_MASK 0x0000fffffffff000
 
 #endif // __ARMV8DEF_H__

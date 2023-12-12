@@ -1,3 +1,6 @@
+#ifndef __ASM_H__
+#define __ASM_H__
+
 #include "common.h"
 
 static inline uint64_t get_core_id(void) {
@@ -9,7 +12,7 @@ static inline uint64_t get_core_id(void) {
     return core_id & 0x3;
 }
 
-uint64_t get_current_el() {
+static inline uint64_t get_current_el() {
     uint64_t el;
     __asm__ (
         "mrs %0, CurrentEL\n\t"
@@ -21,7 +24,7 @@ uint64_t get_current_el() {
     return el;
 }
 
-uint64_t get_esr_el2(void) {
+static inline uint64_t get_esr_el2(void) {
     uint64_t esr;
     __asm__ __volatile__ (
         "mrs %0, esr_el2"
@@ -30,7 +33,7 @@ uint64_t get_esr_el2(void) {
     return esr;
 }
 
-uint64_t get_far_el1(void) {
+static inline uint64_t get_far_el1(void) {
     uint64_t far;
     __asm__ __volatile__ (
         "mrs %0, far_el1"
@@ -39,7 +42,7 @@ uint64_t get_far_el1(void) {
     return far;
 }
 
-uint64_t get_elr_el1(void) {
+static inline uint64_t get_elr_el1(void) {
     uint64_t elr;
     __asm__ __volatile__ (
         "mrs %0, elr_el1"
@@ -48,7 +51,7 @@ uint64_t get_elr_el1(void) {
     return elr;
 }
 
-uint64_t get_sp(void) {
+static inline uint64_t get_sp(void) {
     uint64_t sp;
     __asm__ __volatile__ (
         "mov %0, sp"
@@ -57,7 +60,7 @@ uint64_t get_sp(void) {
     return sp;
 }
 
-void set_sp(uint64_t sp) {
+static inline void set_sp(uint64_t sp) {
     __asm__ __volatile__ (
         "mov sp, %0"
         : /* 出力オペランドはなし */
@@ -65,3 +68,14 @@ void set_sp(uint64_t sp) {
         : /* 破壊されるレジスタはなし */
     );
 }
+
+static inline void set_ttrbr0_el1(uint64_t ttbr0) {
+    __asm__ __volatile__ (
+        "msr ttbr0_el1, %0"
+        : /* 出力オペランドはなし */
+        : "r" (ttbr0) /* 入力オペランド */
+        : /* 破壊されるレジスタはなし */
+    );
+}
+
+#endif // __ASM_H__

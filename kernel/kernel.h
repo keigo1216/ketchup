@@ -1,3 +1,6 @@
+#ifndef __KERNEL_H__
+#define __KERNEL_H__
+
 #include "common.h"
 #include "asm.h"
 #include "print.h"
@@ -13,3 +16,5 @@
         __asm__ __volatile__("mrs %0, " #reg : "=r"(value));                   \
         value;                                                                 \
     })
+
+#endif // __KERNEL_H__
