@@ -74,7 +74,7 @@ void kernel_main() {
 
         proc_a = create_process((uint64_t) proc_a_entry);
         proc_b = create_process((uint64_t) proc_b_entry);
-        // yeild();
+        yeild();
 
         PANIC("booted!");
         PANIC("unreachable");
