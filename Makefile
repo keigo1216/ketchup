@@ -1,25 +1,31 @@
 # Clangのパス
-CLANG := /usr/local/opt/llvm/bin/clang
-OBJDUMP :=/usr/local/opt/llvm/bin/llvm-objdump
-NM := /usr/local/opt/llvm/bin/llvm-nm
+CLANG := $(or $(CLANG_PATH),/usr/local/opt/llvm/bin/clang)
+OBJDUMP := $(or $(OBJDUMP_PATH),/usr/local/opt/llvm/bin/llvm-objdump)
+OBJCOPY := $(or $(OBJCOPY_PATH),/usr/local/opt/llvm/bin/llvm-objcopy)
+NM := $(or $(NM_PATH),/usr/local/opt/llvm/bin/llvm-nm)
 
 # クロスコンパイルのターゲットアーキテクチャ（OSなし）
-TARGET_ARCH := aarch64-none-elf
+TARGET_ARCHITECTUR := aarch64-none-elf
 TARGET_MATCHNE := armv8-a
 
 # ソースファイル
-SRC_DIR := kernel common
-SRCS := $(wildcard $(addsuffix /*.c, $(SRC_DIR)))
-ASM := $(wildcard $(addsuffix /*.S, $(SRC_DIR)))
-SRC := kernel/kernel.c
-OBJS := $(SRCS:.c=.o)
-INCLUDES := $(foreach d, $(SRC_DIR), -I$d)
+KERNEL_SRC_DIR := kernel
+COMMON_SRC_DIR := common
+USER_SRC_DIR := user
+KERNEL_SRCS := $(wildcard $(addsuffix /*.c, $(KERNEL_SRC_DIR) $(COMMON_SRC_DIR)))
+KERNEL_ASM := $(wildcard $(addsuffix /*.S, $(KERNEL_SRC_DIR) $(COMMON_SRC_DIR)))
+USER_SRCS := $(wildcard $(addsuffix /*.c, $(USER_SRC_DIR) $(COMMON_SRC_DIR)))
+KERNEL_SRC := kernel/kernel.c
+KERNEL_OBJS := $(KERNEL_SRCS:.c=.o)
+USER_OBJS := $(USER_SRCS:.c=.o)
+INCLUDES := $(foreach d, $(KERNEL_SRC_DIR) $(COMMON_SRC_DIR) $(USER_SRC_DIR), -I$d)
 
 # コンパイルオプション
-CFLAGS := -std=c11 -Wall -O2 -g3 --target=$(TARGET_ARCH) -march=$(TARGET_MATCHNE) -ffreestanding -nostdlib $(INCLUDES)
+CFLAGS := -std=c11 -Wall -O2 -g3 --target=$(TARGET_ARCHITECTUR) -march=$(TARGET_MATCHNE) -ffreestanding -nostdlib $(INCLUDES)
 
 # 出力ファイル（実行可能バイナリ）
 KERNEL := kernel.elf
+USER := shell
 
 # デバイスツリーブロブのパス
 FW_DIR := ./bcm2710-rpi-3-b-plus.dtb
@@ -38,21 +44,36 @@ QEMU_OPTS := -M $(MATHINE) -cpu $(CPU) -m $(MEMORY) -nographic -kernel $(KERNEL)
 all: clean $(KERNEL) dump nm
 
 %o: %c
-	$(CLANG) $(CFLAGS) -c $< -o $@
+	$(CLANG) $(CFLAGS) -std=c11 -c $< -o $@
 
-# ターゲットのビルド
-$(KERNEL): $(OBJS) $(ASM)
+# カーネルのビルド
+$(KERNEL): $(KERNEL_OBJS) $(KERNEL_ASM) $(USER).bin.o
 	$(CLANG) $(CFLAGS) -Wl,-Tkernel/kernel.ld -Wl,-Map=kernel.map -o $@ $^
+
+# ユーザーアプリケーションのビルド
+$(USER).elf: $(USER_OBJS)
+	$(CLANG) $(CFLAGS) -Wl,-Tuser/user.ld -Wl,-Map=user.map -o $@ $^
+
+# shell.elf => shell.binへの変換 (生バイナリ)
+$(USER).bin: $(USER).elf
+	$(OBJCOPY) --set-section-flags .bss=alloc,contents -O binary $< $@
+
+# shell.bin => shell.bin.oへの変換 (ELF)
+$(USER).bin.o: $(USER).bin
+	$(OBJCOPY) -Ibinary -Oelf64-littleaarch64 $< $@
+
 # dump
 dump: $(KERNEL)
 	$(OBJDUMP) -d kernel.elf >> kernel.dump
+	$(OBJDUMP) -d $(USER).elf >> $(USER).dump
 
 nm: $(KERNEL)
 	$(NM) kernel.elf >> kernel.nm
+	$(NM) $(USER).bin.o >> $(USER).nm
 
 # github actionsでのテスト実行
-test: $(SRCS) $(ASM)
-	clang $(CFLAGS) -Wl,-Tkernel/kernel.ld -Wl,-Map=kernel.map -o kernel.elf $^
+test: $(KERNEL_OBJS) $(KERNEL_ASM)
+	$(CLANG) $(CFLAGS) -Wl,-Tkernel/kernel.ld -Wl,-Map=kernel.map -o $(KERNEL) $^
 
 # QEMUでのテスト実行
 run: $(KERNEL)
@@ -60,6 +81,6 @@ run: $(KERNEL)
 
 # クリーンアップ
 clean:
-	rm -f $(OBJS) $(KERNEL) kernel.dump
+	rm -f $(KERNEL_OBJS) $(USER_OBJS) $(KERNEL) $(USER).elf $(USER).bin $(USER).bin.o kernel.dump *.map *.nm *.dump
 
 .PHONY: all run clean

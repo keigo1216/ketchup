@@ -77,7 +77,7 @@ el1_mode:
     mov x3, 0x00000000
     orr x3, x2, x3
     str x3, [x1] // 1st 1GB mapped by the 1st entry of PUD
-    mov x3, 0x40000000
+    mov x3, 0x40000000 // =1GB (<= 0x3fffffff)
     orr x3, x2, x3
     str x3, [x1, 8] // 2nd 1GB mapped by the 2nd entry of PUD
 
