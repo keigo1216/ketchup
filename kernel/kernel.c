@@ -59,8 +59,8 @@ void kernel_main() {
         memset(__bss, 0, __bss_end - __bss);
 
         // Test accsess to free ram using virtual address
-        printf("__kernel_page: %x\n", ((uint64_t *)(0x0000000000094000))[0]);
-        printf("__kernel_page: %x\n", ((uint64_t *)(0xffff000000094000))[0]);
+        printf("__kernel_page: %x\n", ((uint64_t *)(0xffff0000000a4000))[0]);
+        printf("__kernel_page: %x\n", ((uint64_t *)(0xffff0000000a4000))[0]);
 
         // アイドルプロセスの生成
         idle_proc = create_process((uint64_t) NULL);
@@ -74,7 +74,7 @@ void kernel_main() {
 
         proc_a = create_process((uint64_t) proc_a_entry);
         proc_b = create_process((uint64_t) proc_b_entry);
-        // yeild();
+        yeild();
 
         PANIC("booted!");
         PANIC("unreachable");

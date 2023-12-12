@@ -7,3 +7,4 @@ qemu.log
 *.elf
 *.map
 *.nm
+*.bin

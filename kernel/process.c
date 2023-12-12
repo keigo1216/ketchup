@@ -20,9 +20,15 @@ void yeild(void) {
         return;
     }
 
-    // コンテキストスイッチ
+    /*
+        コンテキストスイッチ
+    */
     struct process *prev_proc = current_proc;
     current_proc = next_proc;
+    // ユーザ空間用のページテーブルを入れ替える
+    // To do: ユーザー空間を作るときにこの部分を実装する（無効なページテーブルを指定してしまうとプログラムが動かなくなる）
+    // printf("next page table = %x\n", next_proc->page_table);
+    // set_ttrbr0_el1((uint64_t)next_proc->page_table);
     switch_context(&prev_proc->sp, &next_proc->sp);
 }
 
@@ -90,8 +96,11 @@ struct process *create_process(uint64_t pc) {
     *(--sp) = 0;  // X29
     *(--sp) = (uint64_t) start_task;  // X30 (LR)　retでのリターンアドレスを入れるところ
 
+    uint64_t *page_table = (uint64_t *)alloc_pages(1);
+
     proc->pid = i + 1;
     proc->state = PROC_RUNNABLE;
     proc->sp = (uint64_t) sp;
+    proc->page_table = page_table;
     return proc;
 }
