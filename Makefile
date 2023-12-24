@@ -72,8 +72,8 @@ nm: $(KERNEL)
 	$(NM) $(USER).bin.o >> $(USER).nm
 
 # github actionsでのテスト実行
-test: $(KERNEL_OBJS) $(KERNEL_ASM)
-	$(CLANG) $(CFLAGS) -Wl,-Tkernel/kernel.ld -Wl,-Map=kernel.map -o $(KERNEL) $^
+test: $(KERNEL_OBJS) $(KERNEL_ASM) $(USER).bin.o
+	$(CLANG) $(CFLAGS) -Wl,-Tkernel/kernel.ld -Wl,-Map=kernel.map -o $@ $^
 
 # QEMUでのテスト実行
 run: $(KERNEL)
