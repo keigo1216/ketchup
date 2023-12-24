@@ -5,6 +5,10 @@ extern char __bss[], __bss_end[], __free_ram[], __free_ram_end[];
 struct process *proc_a;
 struct process *proc_b;
 
+// void user_entry(void) {
+//     PANIC("user_entry");
+// }
+
 void proc_a_entry(void) {
     printf("starting proc_a\n");
     while (1) {
@@ -60,10 +64,10 @@ void kernel_main() {
 
         // Test accsess to free ram using virtual address
         printf("__kernel_page: %x\n", ((uint64_t *)(0xffff0000000a4000))[0]);
-        printf("__kernel_page: %x\n", ((uint64_t *)(0xffff0000000a4000))[0]);
+        printf("__kernel_page: %x\n", ((uint64_t *)(0x00000000000a4000))[0]);
 
         // アイドルプロセスの生成
-        idle_proc = create_process((uint64_t) NULL);
+        idle_proc = create_process(NULL, 0);
         idle_proc->pid = -1;
         current_proc = idle_proc;
 
@@ -72,8 +76,9 @@ void kernel_main() {
         // printf("alloc_pages test: paddr0=%x\n", paddr0);
         // printf("alloc_pages test: paddr1=%x\n", paddr1);
 
-        proc_a = create_process((uint64_t) proc_a_entry);
-        proc_b = create_process((uint64_t) proc_b_entry);
+        // proc_a = create_process((uint64_t) proc_a_entry);
+        // proc_b = create_process((uint64_t) proc_b_entry);
+        create_process(_binary_shell_bin_start, (size_t)(_binary_shell_bin_end - _binary_shell_bin_start));        
         yeild();
 
         PANIC("booted!");

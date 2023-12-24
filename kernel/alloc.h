@@ -5,6 +5,8 @@
 #include "print.h"
 #include "armv8def.h"
 
+#define KERNEL_BASE_ADDR 0xffff000000000000
+
 paddr_t alloc_pages(uint32_t n);
 
 
