@@ -1,7 +1,7 @@
 ENTRY(start)
 
 SECTIONS {
-    . = 0x10000000;
+    . = 0x1000000;
 
     .text :{
         KEEP(*(.text.start));
@@ -23,6 +23,6 @@ SECTIONS {
         . += 64 * 1024; /* 64KB */
         __stack_top = .;
 
-       ASSERT(. < 0x10000000 + 0x800000, "too large executable");
+       ASSERT(. < 0x1000000 + 0x800000, "too large executable");
     }
 }

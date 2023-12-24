@@ -46,7 +46,7 @@ void map_page(
     if ((table0[l0_index] & PAGE_V) == 0) {
         // L0 table entry is not present, so allocate L1 table
         paddr_t l1_paddr = alloc_pages(1);
-        table0[l0_index] = l1_paddr | PD_TABLE;
+        table0[l0_index] = (l1_paddr | PD_TABLE) - KERNEL_BASE_ADDR;
     }
 
     /*
@@ -57,7 +57,7 @@ void map_page(
     if ((table1[l1_index] & PAGE_V) == 0) {
         // L1 table entry is not present, so allocate L2 table
         paddr_t l2_paddr = alloc_pages(1);
-        table1[l1_index] = l2_paddr | PD_TABLE;
+        table1[l1_index] = (l2_paddr | PD_TABLE) - KERNEL_BASE_ADDR;
     }
 
     /*
@@ -68,14 +68,14 @@ void map_page(
     if ((table2[l2_index] & PAGE_V) == 0) {
         // L2 table entry is not present, so allocate L3 table
         paddr_t l3_paddr = alloc_pages(1);
-        table2[l2_index] = l3_paddr | PD_TABLE;
+        table2[l2_index] = (l3_paddr | PD_TABLE) - KERNEL_BASE_ADDR;
     }
 
     /*
         Create L3 table entry
     */
     uint64_t *table3 = (uint64_t *)(table2[l2_index] & PAGE_NEXT_TABLE_ADDR_MASK);
-    table3[l3_index] = paddr | flags | PAGE_ENTRY | PD_ACCESS;
+    table3[l3_index] = (paddr | flags | PAGE_ENTRY | PD_ACCESS) - KERNEL_BASE_ADDR;
 
     return;
 }

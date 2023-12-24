@@ -5,6 +5,9 @@
 #include "print.h"
 #include "alloc.h"
 #include "asm.h"
+#include "common.h"
+
+#define USER_BASE 0x1000000
 
 struct process {
     int pid;                // プロセスID
@@ -19,7 +22,7 @@ void yeild(void);
 __attribute__((naked))
 void switch_context (uint64_t *prev_sp, uint64_t *next_sp);
 
-struct process *create_process(uint64_t pc);
+struct process *create_process(const void *image, size_t image_size);
 
 extern struct process procs[PROCS_MAX];
 extern struct process *current_proc;

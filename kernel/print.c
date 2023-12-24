@@ -61,7 +61,7 @@ void printf(char *fmt, ...) {
                     break;
                 }
                 case 'x': {
-                    uint64_t value = va_arg(vargs, int);
+                    uint64_t value = va_arg(vargs, uint64_t);
 
                     for (int i = 15; i >=0; i--) {
                         int nibble = (value >> (i * 4)) & 0xf;

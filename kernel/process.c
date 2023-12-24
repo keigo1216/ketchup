@@ -27,8 +27,7 @@ void yeild(void) {
     current_proc = next_proc;
     // ユーザ空間用のページテーブルを入れ替える
     // To do: ユーザー空間を作るときにこの部分を実装する（無効なページテーブルを指定してしまうとプログラムが動かなくなる）
-    // printf("next page table = %x\n", next_proc->page_table);
-    // set_ttrbr0_el1((uint64_t)next_proc->page_table);
+    set_ttrbr0_el1(((uint64_t)next_proc->page_table - KERNEL_BASE_ADDR));
     switch_context(&prev_proc->sp, &next_proc->sp);
 }
 
@@ -58,7 +57,7 @@ void switch_context (uint64_t *prev_sp, uint64_t *next_sp) {
 __attribute__((naked))
 void start_task(void) {
     __asm__ __volatile__ (
-        "ldr x0, =0x00000005\n\t"
+        "ldr x0, =0x00000000\n\t"
         "msr spsr_el1, x0\n\t"
         "ldr x0, [sp], #8\n\t"
         "msr elr_el1, x0\n\t"
@@ -66,7 +65,7 @@ void start_task(void) {
     );
 }
 
-struct process *create_process(uint64_t pc) {
+struct process *create_process(const void *image, size_t image_size) {
     // 空いているプロセス構造体を探す
     struct process *proc = NULL;
     int i;
@@ -82,7 +81,7 @@ struct process *create_process(uint64_t pc) {
     }
 
     uint64_t *sp = (uint64_t *) &proc->stack[sizeof(proc->stack)];
-    *(--sp) = pc; // プログラムカウンタ
+    *(--sp) = (uint64_t)USER_BASE; // プログラムカウンタ
     *(--sp) = 0;  // X19
     *(--sp) = 0;  // X20
     *(--sp) = 0;  // X21
@@ -97,6 +96,15 @@ struct process *create_process(uint64_t pc) {
     *(--sp) = (uint64_t) start_task;  // X30 (LR)　retでのリターンアドレスを入れるところ
 
     uint64_t *page_table = (uint64_t *)alloc_pages(1);
+    // ユーザーのページをマッピングする
+    for (usize64_t off = 0; off < image_size; off += PAGE_SIZE) {
+        paddr_t page = alloc_pages(1);
+        // printf("page = %x\n", page);
+        memcpy((void *)page, image + off, PAGE_SIZE);
+        map_page(page_table, USER_BASE + off, page, PAGE_RW | PAGE_ACCESS);
+    }
+
+    // printf("page_table = %x\n", page_table);
 
     proc->pid = i + 1;
     proc->state = PROC_RUNNABLE;

@@ -17,4 +17,6 @@
         value;                                                                 \
     })
 
+extern char _binary_shell_bin_start[], _binary_shell_bin_size[], _binary_shell_bin_end[];
+
 #endif // __KERNEL_H__
