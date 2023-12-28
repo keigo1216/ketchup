@@ -1,5 +1,7 @@
 #include "user.h"
 
 void main(void) {
-    for(;;);
+    // for(;;);
+    printf("Hello, world1!\n");
+    printf("Hello, world2!\n");
 }

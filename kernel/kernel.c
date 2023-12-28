@@ -5,10 +5,6 @@ extern char __bss[], __bss_end[], __free_ram[], __free_ram_end[];
 struct process *proc_a;
 struct process *proc_b;
 
-// void user_entry(void) {
-//     PANIC("user_entry");
-// }
-
 void proc_a_entry(void) {
     printf("starting proc_a\n");
     while (1) {
@@ -34,25 +30,27 @@ void proc_b_entry(void) {
 }
 
 void handle_trap(void) {
-    uint64_t esr_el1 = get_esr_el2();
+    uint64_t esr_el1 = get_esr_el1();
     uint64_t far_el1 = get_far_el1();
     uint64_t elr_el1 = get_elr_el1();
 
     uint64_t ec = esr_el1 >> 26;
-
     switch (ec) {
-        case 0x15: // EC = 0x15, Instruction abort from lower EL
-            PANIC("Instruction abort from lower EL\n");
-            break;
         default:
             PANIC("unexpected trap ec=%x, far=%x, elr=%x\n", ec, far_el1, elr_el1);
             break;
     }
-
 }
 
-void handle_syscall(void) {
-    PANIC("handle_syscall");
+void handle_syscall(int sysno, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6) {
+    switch (sysno) {
+        case SYS_PUTCHAR:
+            putchar(arg1);
+            break;
+        default:
+            PANIC("unknown syscall: sysno=%d\n", sysno);
+            break;
+    }
 }
 
 void kernel_main() {
@@ -63,8 +61,8 @@ void kernel_main() {
         memset(__bss, 0, __bss_end - __bss);
 
         // Test accsess to free ram using virtual address
-        printf("__kernel_page: %x\n", ((uint64_t *)(0xffff0000000a4000))[0]);
-        printf("__kernel_page: %x\n", ((uint64_t *)(0x00000000000a4000))[0]);
+        // printf("__kernel_page: %x\n", ((uint64_t *)(0xffff0000000a4000))[0]);
+        // printf("__kernel_page: %x\n", ((uint64_t *)(0x00000000000a4000))[0]);
 
         // アイドルプロセスの生成
         idle_proc = create_process(NULL, 0);

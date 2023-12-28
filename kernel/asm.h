@@ -33,6 +33,24 @@ static inline uint64_t get_esr_el2(void) {
     return esr;
 }
 
+/*
+    ESR_EL1 registers is 32bit register.
+    +-----------+---------+------------+
+    | EC [31:26]| IL [25] | ISS [24:0] |
+    +-----------+---------+------------+
+
+    EC: Exception Class. Indicates the reason for the exception.
+    - 0x15: SVC instruction execution
+*/
+static inline uint64_t get_esr_el1(void) {
+    uint64_t esr;
+    __asm__ __volatile__ (
+        "mrs %0, esr_el1"
+        : "=r" (esr)
+    );
+    return esr;
+}
+
 static inline uint64_t get_far_el1(void) {
     uint64_t far;
     __asm__ __volatile__ (
