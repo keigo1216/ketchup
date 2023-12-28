@@ -21,7 +21,7 @@ USER_OBJS := $(USER_SRCS:.c=.o)
 INCLUDES := $(foreach d, $(KERNEL_SRC_DIR) $(COMMON_SRC_DIR) $(USER_SRC_DIR), -I$d)
 
 # コンパイルオプション
-CFLAGS := -std=c11 -Wall -O2 -g3 --target=$(TARGET_ARCHITECTUR) -march=$(TARGET_MATCHNE) -ffreestanding -nostdlib $(INCLUDES)
+CFLAGS := -std=c11 -Wall -O0 -g3 --target=$(TARGET_ARCHITECTUR) -march=$(TARGET_MATCHNE) -ffreestanding -nostdlib $(INCLUDES)
 
 # 出力ファイル（実行可能バイナリ）
 KERNEL := kernel.elf

@@ -20,10 +20,6 @@ boot:
     mov     x2, #HCR_EL2_RW
     msr     HCR_EL2, x2
 
-    // set stack pointer
-    ldr     x4, =__stack_top
-    mov     sp, x4
-
     mrs  x1, mpidr_el1
     and  x1, x1, #3
     cbz x1, EL3_TO_EL1
@@ -40,16 +36,18 @@ EL3_TO_EL1:
     mov     x0, PSR_A_BIT | PSR_I_BIT | PSR_F_BIT | PSR_MODE_EL1h
     msr     SPSR_EL3, x0
 
-    mov     x24, sp
-    msr     SP_EL1, x24
+    // Set Stack Pointer
+    ldr     x4, =__stack_top
+    msr     SP_EL1, x4
+
+    // Use SP_ELt (EL1 => SP_EL1, EL0 => SP_EL0)
+    msr     SPSel, #1
+
     eret
 
 el1_mode:
-    ldr x10, =__stack_top
-    mov sp, x10
-    
-    ldr   x0, =__stack_top
-    msr   SP_EL0, x0
+    ldr   x5, =exception_vector // 例外ハンドラの先頭アドレスを設定する
+    msr   VBAR_EL1, x5
 
     mrs   x0, CPACR_EL1         // CPACR_EL1レジスタの現在の値を読み込む
     orr   x0, x0, #(0b11 << 20) // CPACR_EL1の浮動小数点とSIMDのアクセスを有効にする

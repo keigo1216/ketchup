@@ -17,7 +17,9 @@ typedef uint64_t usize64_t;
 #define is_aligned(value, align) __builtin_is_aligned(value, align)
 #define offsetof(type, member)   __builtin_offsetof(type, member)
 
-#define PL011_UART_BASE 0x3F201000
+#define KERNEL_BASE_ADDR 0xffff000000000000
+
+#define PL011_UART_BASE 0x3F201000 + KERNEL_BASE_ADDR
 #define PL011_UART_DR   (PL011_UART_BASE + 0x00)
 #define PL011_UART_FR   (PL011_UART_BASE + 0x18)
 
@@ -32,7 +34,10 @@ typedef uint64_t usize64_t;
 #define PROC_UNUSED 0
 #define PROC_RUNNABLE 1
 
+#define SYS_PUTCHAR 1
+
 void *memset(void *buf, char c, size_t n);
 void *memcpy(void *dst, const void *src, size_t n);
 char *strcpy(char *dst, const char *src);
 int strcmp(const char *s1, const char *s2);
+void printf(char *fmt, ...);

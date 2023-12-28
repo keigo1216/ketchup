@@ -54,8 +54,20 @@ exception_common:
     stp  x27, x28, [sp, #-16]!
     stp  x29, x30, [sp, #-16]!
 
-    b handle_trap
-    
+handle_trap:
+    // Handle system call
+    mrs x9, esr_el1
+    lsr x9, x9, #26
+    cmp x9, 0x15
+    bne 1f
+
+    bl handle_syscall
+    b 2f
+
+1:
+    bl handle_trap
+
+2:
     ldp  x29, x30, [sp], #16
     ldp  x27, x28, [sp], #16
     ldp  x25, x26, [sp], #16
