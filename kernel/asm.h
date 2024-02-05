@@ -24,6 +24,24 @@ static inline uint64_t get_current_el() {
     return el;
 }
 
+static inline uint64_t get_cntp_tval_el0(void) {
+    uint64_t cntp_tval;
+    __asm__ (
+        "mrs %0, CNTP_TVAL_EL0"
+        : "=r" (cntp_tval)
+    );
+    return cntp_tval;
+}
+
+static inline uint64_t get_cntp_ctl_el0(void) {
+    uint64_t cntp_ctl_el0;
+    __asm__ (
+        "mrs %0, cntv_ctl_el0"
+        : "=r" (cntp_ctl_el0)
+    );
+    return cntp_ctl_el0;
+}
+
 static inline uint64_t get_esr_el2(void) {
     uint64_t esr;
     __asm__ __volatile__ (
@@ -94,6 +112,42 @@ static inline void set_ttrbr0_el1(uint64_t ttbr0) {
         : "r" (ttbr0) /* 入力オペランド */
         : /* 破壊されるレジスタはなし */
     );
+}
+
+static inline uint64_t get_cntfrq_el0(void) {
+    uint64_t cntfrq;
+    __asm__ __volatile__ (
+        "mrs %0, cntfrq_el0"
+        : "=r" (cntfrq)
+    );
+    return cntfrq;
+}
+
+static inline uint64_t get_cntpct_el0(void) {
+    uint64_t cntpct;
+    __asm__ __volatile__ (
+        "mrs %0, cntpct_el0"
+        : "=r" (cntpct)
+    );
+    return cntpct;
+}
+
+static inline void set_cntp_cval_el0(uint64_t cntp_cval) {
+    __asm__ __volatile__ (
+        "msr cntv_tval_el0, %0"
+        : /* 出力オペランドはなし */
+        : "r" (cntp_cval) /* 入力オペランド */
+        : /* 破壊されるレジスタはなし */
+    );
+}
+
+static inline uint64_t get_cntp_cval_el0(void) {
+    uint64_t cntp_cval;
+    __asm__ __volatile__ (
+        "mrs %0, cntv_cval_el0"
+        : "=r" (cntp_cval)
+    );
+    return cntp_cval;
 }
 
 #endif // __ASM_H__

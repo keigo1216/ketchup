@@ -49,4 +49,9 @@
 #define PAGE_NOACCESS (0 << 6)
 #define PAGE_NEXT_TABLE_ADDR_MASK 0x0000fffffffff000
 
+/* GIC bits */
+#define GCI_CTRL_BASE 0x40000000
+#define CORE0_TIMER_INTTERUPT (GCI_CTRL_BASE + 0x40)
+#define CORE0_IRQ_SOURCE 0x40000060
+
 #endif // __ARMV8DEF_H__

@@ -1,9 +1,14 @@
 #include "kernel.h"
+#include "timer.h"
 
 extern char __bss[], __bss_end[], __free_ram[], __free_ram_end[];
 
 struct process *proc_a;
 struct process *proc_b;
+
+// void timer_handler();
+// void enable_timer();
+// void disable_timer();
 
 void proc_a_entry(void) {
     printf("starting proc_a\n");
@@ -56,6 +61,12 @@ void handle_syscall(int sysno, int arg1, int arg2, int arg3, int arg4, int arg5,
 void kernel_main() {
     unsigned int core_id = get_core_id();
     if (core_id == 0) {
+        init_timer_handler();
+
+        while(1) {
+            __asm__ __volatile__ ("wfi");
+        }
+
         // clear bss
         printf("current el = %d\n", get_current_el());
         memset(__bss, 0, __bss_end - __bss);
