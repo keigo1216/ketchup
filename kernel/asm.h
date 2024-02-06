@@ -134,7 +134,7 @@ static inline uint64_t get_cntpct_el0(void) {
 
 static inline void set_cntp_cval_el0(uint64_t cntp_cval) {
     __asm__ __volatile__ (
-        "msr cntv_tval_el0, %0"
+        "msr cntp_tval_el0, %0"
         : /* 出力オペランドはなし */
         : "r" (cntp_cval) /* 入力オペランド */
         : /* 破壊されるレジスタはなし */
