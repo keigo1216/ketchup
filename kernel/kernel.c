@@ -6,10 +6,6 @@ extern char __bss[], __bss_end[], __free_ram[], __free_ram_end[];
 struct process *proc_a;
 struct process *proc_b;
 
-// void timer_handler();
-// void enable_timer();
-// void disable_timer();
-
 void proc_a_entry(void) {
     printf("starting proc_a\n");
     while (1) {
@@ -31,6 +27,16 @@ void proc_b_entry(void) {
         for (int i = 0; i < 1000000; i++) {
             __asm__ __volatile__("nop");
         }
+    }
+}
+
+void interrupt_trap(void) {
+    printf("interrupt_trap\n");
+    uint64_t int_id = get_core0_interrupt_source();
+    if (int_id == 0x08) { // CNTVIRQ interrupt
+        printf("CNTVIRQ interrupt\n");
+    } else {
+        printf("unknown interrupt: int_id=%x\n", int_id); // To do: implement interrupt handler
     }
 }
 

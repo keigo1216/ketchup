@@ -150,4 +150,29 @@ static inline uint64_t get_cntp_cval_el0(void) {
     return cntp_cval;
 }
 
+static inline uint64_t get_core0_interrupt_source(void) {
+    return *((uint64_t *)0x40000060);
+}
+
+//https://developer.arm.com/documentation/ddi0595/2021-03/AArch64-Registers/ICC-IAR0-EL1--Interrupt-Controller-Interrupt-Acknowledge-Register-0?lang=en
+// static inline uint64_t get_INTID(void) {
+//     // uint64_t INTID;
+//     // __asm__ __volatile__ (
+//     //     "mrs %0, ICC_IAR0_EL1"
+//     //     : "=r" (INTID)
+//     // );
+//     // return INTID;
+//     // MRS <Xt>, ICC_NMIAR1_EL1
+//     uint64_t int_id;
+//     // __asm__ __volatile__ (
+//     //     "mrs %0, ICC_IAR1_EL1"
+//     //     : "=r" (int_id)
+//     // );
+//     __asm__ __volatile__(
+//         "mrs %0, ICC_IAR1_EL1" 
+//         : "=r" (int_id)
+//     );
+//     return int_id;
+// }
+
 #endif // __ASM_H__

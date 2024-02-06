@@ -9,7 +9,7 @@ boot:
     ldr  x0, =0x30d00800 // Lttile Endian, MMU disabled, I/D-cache disabled
     msr  sctlr_el1, x0
     msr  sctlr_el2, x0
-
+    
     // Non-Secure
     // set EL2 to AArch64
     mrs     x0, SCR_EL3
