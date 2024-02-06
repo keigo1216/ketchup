@@ -1,12 +1,6 @@
 #include "timer.h"
 
 void init_timer_handler() {
-    // uint64_t cntfrq_el0 = get_cntfrq_el0(); // get timer freq
-    // uint64_t cntpct_el0 = get_cntpct_el0(); // get current timerstamp
-
-    // uint64_t next_tick = cntpct_el0 + cntfrq_el0; // set next tick
-    // set_cntp_cval_el0(next_tick);
-
     set_timer(); // set timer
     enable_timer(); // enable timer
 }
