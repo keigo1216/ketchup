@@ -7,5 +7,7 @@ void init_timer_handler();
 
 void enable_timer();
 
+void set_timer();
+
 // To do
 // void disable_timer();

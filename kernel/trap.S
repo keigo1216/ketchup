@@ -101,7 +101,7 @@ interrupt_common:
     stp  x27, x28, [sp, #-16]!
     stp  x29, x30, [sp, #-16]!
 
-    b interrupt_trap
+    bl interrupt_trap
 
     ldp  x29, x30, [sp], #16
     ldp  x27, x28, [sp], #16

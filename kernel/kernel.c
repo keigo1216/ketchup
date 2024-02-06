@@ -35,6 +35,7 @@ void interrupt_trap(void) {
     uint64_t int_id = get_core0_interrupt_source();
     if (int_id == 0x08) { // CNTVIRQ interrupt
         printf("CNTVIRQ interrupt\n");
+        set_timer();
     } else {
         printf("unknown interrupt: int_id=%x\n", int_id); // To do: implement interrupt handler
     }
@@ -69,9 +70,9 @@ void kernel_main() {
     if (core_id == 0) {
         init_timer_handler();
 
-        while(1) {
-            __asm__ __volatile__ ("wfi");
-        }
+        // while(1) {
+        //     __asm__ __volatile__ ("wfi");
+        // }
 
         // clear bss
         printf("current el = %d\n", get_current_el());
