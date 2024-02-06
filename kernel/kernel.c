@@ -33,8 +33,8 @@ void proc_b_entry(void) {
 void interrupt_trap(void) {
     printf("interrupt_trap\n");
     uint64_t int_id = get_core0_interrupt_source();
-    if (int_id == 0x08) { // CNTVIRQ interrupt
-        printf("CNTVIRQ interrupt\n");
+    if (int_id == 0x02) { // CNTVIRQ interrupt (Non-secure physical timer event)
+        printf("CNTPNS interrupt\n");
         set_timer();
     } else {
         printf("unknown interrupt: int_id=%x\n", int_id); // To do: implement interrupt handler

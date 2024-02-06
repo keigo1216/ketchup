@@ -22,21 +22,20 @@ void enable_timer() {
         "LDR X1, =0x40000000\n\t"
         "MOV X2, #0x40\n\t"
         "ADD X1, X1, X2\n\t"
-        "MOV X2, #8\n\t"
+        "MOV X2, #2\n\t"
         "STR X2, [X1]\n\t"
     );
 }
 
 void set_timer() {
     uint64_t cntfrq_el0 = get_cntfrq_el0(); // get timer freq
-    uint64_t cntpct_el0 = get_cntpct_el0(); // get current timerstamp
 
-    uint64_t next_tick = cntpct_el0 + 100; // set next tick
+    uint64_t next_tick = cntfrq_el0; // set next tick
     set_cntp_cval_el0(next_tick);
 
     // clear timer interrupt
     __asm__ __volatile__ (
         "ldr x0, =0x01\n\t"
-        "msr cntv_ctl_el0, x0\n\t"
+        "msr cntp_ctl_el0, x0\n\t"
     );
 }
