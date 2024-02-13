@@ -151,7 +151,7 @@ static inline uint64_t get_cntp_cval_el0(void) {
 }
 
 static inline uint64_t get_core0_interrupt_source(void) {
-    return *((uint64_t *)0x40000060);
+    return *((uint64_t *)(0x40000060 + KERNEL_BASE_ADDR));
 }
 
 //https://developer.arm.com/documentation/ddi0595/2021-03/AArch64-Registers/ICC-IAR0-EL1--Interrupt-Controller-Interrupt-Acknowledge-Register-0?lang=en

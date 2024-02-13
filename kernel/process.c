@@ -25,9 +25,11 @@ void yeild(void) {
     */
     struct process *prev_proc = current_proc;
     current_proc = next_proc;
+    printf("switch from %d to %d\n", prev_proc->pid, next_proc->pid);
     // ユーザ空間用のページテーブルを入れ替える
     // To do: ユーザー空間を作るときにこの部分を実装する（無効なページテーブルを指定してしまうとプログラムが動かなくなる）
     set_ttrbr0_el1(((uint64_t)next_proc->page_table - KERNEL_BASE_ADDR));
+    // printf("switch from %d to %d\n", prev_proc->pid, next_proc->pid);
     switch_context(&prev_proc->sp, &next_proc->sp);
 }
 
@@ -110,5 +112,17 @@ struct process *create_process(const void *image, size_t image_size) {
     proc->state = PROC_RUNNABLE;
     proc->sp = (uint64_t) sp;
     proc->page_table = page_table;
+    proc->left_time = 2;
+    printf("create process: pid=%d, sp=%x, page_table=%x\n", proc->pid, proc->sp, proc->page_table);
     return proc;
+}
+
+void handle_timer_irq(void) {
+    if (current_proc->pid > 0) {
+        current_proc->left_time--;
+        if (current_proc->left_time <= 0) {
+            current_proc->left_time = 2;
+            yeild();
+        }
+    }
 }
