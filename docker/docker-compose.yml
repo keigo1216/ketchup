@@ -1,0 +1,9 @@
+version: '3.2'
+
+services:
+  myservice:
+    build: .
+    volumes:
+      - ./../:/src
+    working_dir: /src
+    tty: true
