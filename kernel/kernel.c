@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "timer.h"
 
 extern char __bss[], __bss_end[], __free_ram[], __free_ram_end[];
 
@@ -29,18 +30,6 @@ void proc_b_entry(void) {
     }
 }
 
-void handle_trap(void) {
-    uint64_t esr_el1 = get_esr_el1();
-    uint64_t far_el1 = get_far_el1();
-    uint64_t elr_el1 = get_elr_el1();
-
-    uint64_t ec = esr_el1 >> 26;
-    switch (ec) {
-        default:
-            PANIC("unexpected trap ec=%x, far=%x, elr=%x\n", ec, far_el1, elr_el1);
-            break;
-    }
-}
 
 void handle_syscall(int sysno, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6) {
     switch (sysno) {
@@ -56,6 +45,12 @@ void handle_syscall(int sysno, int arg1, int arg2, int arg3, int arg4, int arg5,
 void kernel_main() {
     unsigned int core_id = get_core_id();
     if (core_id == 0) {
+        init_timer_handler();
+
+        // while(1) {
+        //     __asm__ __volatile__ ("wfi");
+        // }
+
         // clear bss
         printf("current el = %d\n", get_current_el());
         memset(__bss, 0, __bss_end - __bss);
@@ -77,6 +72,7 @@ void kernel_main() {
         // proc_a = create_process((uint64_t) proc_a_entry);
         // proc_b = create_process((uint64_t) proc_b_entry);
         create_process(_binary_shell_bin_start, (size_t)(_binary_shell_bin_end - _binary_shell_bin_start));        
+        create_process(_binary_shell_bin_start, (size_t)(_binary_shell_bin_end - _binary_shell_bin_start));
         yeild();
 
         PANIC("booted!");
