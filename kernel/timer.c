@@ -24,7 +24,7 @@ void enable_timer() {
 void set_timer() {
     uint64_t cntfrq_el0 = get_cntfrq_el0(); // get timer freq
 
-    uint64_t next_tick = cntfrq_el0; // set next tick
+    uint64_t next_tick = cntfrq_el0 / 10; // set next tick
     set_cntp_cval_el0(next_tick);
 
     // clear timer interrupt

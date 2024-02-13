@@ -54,4 +54,7 @@
 #define CORE0_TIMER_INTTERUPT (GCI_CTRL_BASE + 0x40)
 #define CORE0_IRQ_SOURCE (GCI_CTRL_BASE + 0x60)
 
+/* Time Quantum */
+#define INIT_TIME_QUANTUM 2 // (timer interrupt cycle = 100ms, so 200ms = 2 * 100ms)
+
 #endif // __ARMV8DEF_H__

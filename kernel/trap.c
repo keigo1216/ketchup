@@ -3,8 +3,6 @@
 void interrupt_trap(void) {
     uint64_t int_id = get_core0_interrupt_source();
     if (int_id == 0x02) { // CNTVIRQ interrupt (Non-secure physical timer event)
-        // printf("CNTPNS interrupt\n");
-        printf("CNTVIRQ interrupt\n");
         set_timer();
         handle_timer_irq();
     } else {
