@@ -10,7 +10,14 @@ make
 make run
 ```
 
+## Run on Docker
+dockerで作った仮想環境も配布していす（ただし, qemuのバージョンが古いので正常に動作しない可能性があります）
+```
+cd docker
+docker-compose up -d --build
+```
+
 ## requirement
-- qemu
-- clang
+- qemu : 8.1.3
+- clang : Apple clang version 15.0.0 (clang-1500.1.0.2.5)
 - llvm
