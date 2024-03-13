@@ -109,6 +109,7 @@ struct process *create_process(const void *image, size_t image_size) {
 
     proc->pid = i + 1;
     proc->state = PROC_RUNNABLE;
+    proc->wait_for = IPC_ANY;
     proc->sp = (uint64_t) sp;
     proc->page_table = page_table;
     proc->left_time = INIT_TIME_QUANTUM;
