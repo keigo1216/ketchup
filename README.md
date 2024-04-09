@@ -17,7 +17,20 @@ cd docker
 docker-compose up -d --build
 ```
 
-## requirement
+## requirement (WSL2)
+setup enviroment
+```
+sudo apt update
+sudo apt install -y clang llvm lld qemu-system-aarch64 curl
+sudo apt install make
+
+export CLANG_PATH=/usr/bin/clang
+export OBJDUMP_PATH=/usr/bin/llvm-objdump
+export OBJCOPY_PATH=/usr/bin/llvm-objcopy
+export NM_PATH=/usr/bin/llvm-nm
+```
+
+## requirement (Macbook)
 - qemu : 8.1.3
 - clang : Apple clang version 15.0.0 (clang-1500.1.0.2.5)
 - llvm
