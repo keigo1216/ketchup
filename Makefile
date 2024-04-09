@@ -1,7 +1,7 @@
 # Clangのパス
-CLANG := $(or $(CLANG_PATH),/usr/local/opt/llvm/bin/clang)
-OBJDUMP := $(or $(OBJDUMP_PATH),/usr/local/opt/llvm/bin/llvm-objdump)
-OBJCOPY := $(or $(OBJCOPY_PATH),/usr/local/opt/llvm/bin/llvm-objcopy)
+CLANG := $(or $(CLANG_PATH),/usr/local/opt/llvm/bin/clang, /usr/bin/clang)
+OBJDUMP := $(or $(OBJDUMP_PATH),/usr/local/opt/llvm/bin/llvm-objdump, /usr/bin/llvm-objdump)
+OBJCOPY := $(or $(OBJCOPY_PATH),/usr/local/opt/llvm/bin/llvm-objcopy, /usr/bin/llvm-objcopy)
 NM := $(or $(NM_PATH),/usr/local/opt/llvm/bin/llvm-nm)
 
 # クロスコンパイルのターゲットアーキテクチャ（OSなし）
