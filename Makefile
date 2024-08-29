@@ -1,5 +1,5 @@
 # Clangのパス
-CLANG := $(or $(CLANG_PATH),/usr/local/opt/llvm/bin/clang, /usr/bin/clang)
+CC := $(or $(CLANG_PATH),/usr/local/opt/llvm/bin/clang, /usr/bin/clang)
 OBJDUMP := $(or $(OBJDUMP_PATH),/usr/local/opt/llvm/bin/llvm-objdump, /usr/bin/llvm-objdump)
 OBJCOPY := $(or $(OBJCOPY_PATH),/usr/local/opt/llvm/bin/llvm-objcopy, /usr/bin/llvm-objcopy)
 NM := $(or $(NM_PATH),/usr/local/opt/llvm/bin/llvm-nm)
@@ -44,15 +44,15 @@ QEMU_OPTS := -M $(MATHINE) -cpu $(CPU) -m $(MEMORY) -nographic -kernel $(KERNEL)
 all: clean $(KERNEL) dump nm
 
 %o: %c
-	$(CLANG) $(CFLAGS) -std=c11 -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # カーネルのビルド
 $(KERNEL): $(KERNEL_OBJS) $(KERNEL_ASM) $(USER).bin.o
-	$(CLANG) $(CFLAGS) -Wl,-Tkernel/kernel.ld -Wl,-Map=kernel.map -o $@ $^
+	$(CC) $(CFLAGS) -Wl,-Tkernel/kernel.ld -Wl,-Map=kernel.map -o $@ $^
 
 # ユーザーアプリケーションのビルド
 $(USER).elf: $(USER_OBJS)
-	$(CLANG) $(CFLAGS) -Wl,-Tuser/user.ld -Wl,-Map=user.map -o $@ $^
+	$(CC) $(CFLAGS) -Wl,-Tuser/user.ld -Wl,-Map=user.map -o $@ $^
 
 # shell.elf => shell.binへの変換 (生バイナリ)
 $(USER).bin: $(USER).elf
@@ -73,7 +73,7 @@ nm: $(KERNEL)
 
 # github actionsでのテスト実行
 test: $(KERNEL_OBJS) $(KERNEL_ASM) $(USER).bin.o
-	$(CLANG) $(CFLAGS) -Wl,-Tkernel/kernel.ld -Wl,-Map=kernel.map -o $@ $^
+	$(CC) $(CFLAGS) -Wl,-Tkernel/kernel.ld -Wl,-Map=kernel.map -o $@ $^
 
 # QEMUでのテスト実行
 run: $(KERNEL)
