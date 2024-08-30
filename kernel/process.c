@@ -116,6 +116,21 @@ struct process *create_process(const void *image, size_t image_size) {
     return proc;
 }
 
+void process_block(struct process *proc) {
+    proc -> state = PROC_BLOCKED;
+}
+
+void process_resume(struct process *proc) {
+    proc -> state = PROC_RUNNABLE;
+    
+    // add process list waiting for run
+    for (int i = 0; i < PROCS_MAX; i++) {
+        if (procs[i].state == PROC_UNUSED) {
+            
+        }
+    }
+}
+
 void handle_timer_irq(void) {
     if (current_proc->pid > 0) {
         current_proc->left_time--;

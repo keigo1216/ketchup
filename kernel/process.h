@@ -26,6 +26,8 @@ void switch_context (uint64_t *prev_sp, uint64_t *next_sp);
 
 struct process *create_process(const void *image, size_t image_size);
 
+void process_block(struct process *proc);
+
 void handle_timer_irq(void);
 
 extern struct process procs[PROCS_MAX];

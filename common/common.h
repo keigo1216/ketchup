@@ -33,6 +33,7 @@ typedef uint64_t usize64_t;
 #define PROCS_MAX 8
 #define PROC_UNUSED 0
 #define PROC_RUNNABLE 1
+#define PROC_BLOCKED 2
 
 #define SYS_PUTCHAR 1
 

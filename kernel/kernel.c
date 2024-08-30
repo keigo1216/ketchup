@@ -71,8 +71,11 @@ void kernel_main() {
 
         // proc_a = create_process((uint64_t) proc_a_entry);
         // proc_b = create_process((uint64_t) proc_b_entry);
+        
+        test_list_macro();
+
         create_process(_binary_shell_bin_start, (size_t)(_binary_shell_bin_end - _binary_shell_bin_start));        
-        create_process(_binary_shell_bin_start, (size_t)(_binary_shell_bin_end - _binary_shell_bin_start));
+        // create_process(_binary_shell_bin_start, (size_t)(_binary_shell_bin_end - _binary_shell_bin_start));
         yeild();
 
         PANIC("booted!");

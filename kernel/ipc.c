@@ -1,5 +1,12 @@
 #include "ipc.h"
 
+/*
+    flags format (every fields has a 1 bit)
+    | IPC_NOBLOCK | IPC_FROM | IPC_RECV | IPC_SEND |
+    IPC_FROM[2] : Message memmory from Kernel space => 0, from User space => 1 
+    IPC_RECV[1] : 
+    IPC_SEND[0] :
+*/
 static void send_message(struct process *dst, struct message *m, unsigned char flags) {
 
     /*
