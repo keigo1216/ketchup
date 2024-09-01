@@ -37,6 +37,9 @@ void yeild(void) {
     // }
 
     // TODO : add cpu time to next_proc
+    if (next_proc != &idle_proc) {
+        next_proc->left_time = INIT_TIME_QUANTUM;
+    }
     
     // 実行待ちのプロセスが存在しなかったら譲らずに実行を続ける
     if (next_proc == current_proc) {
@@ -131,7 +134,7 @@ void init_process_struct(struct process *proc, int pid, const void *image, size_
     proc->wait_for = IPC_ANY;
     proc->sp = (uint64_t) sp;
     proc->page_table = page_table;
-    proc->left_time = INIT_TIME_QUANTUM; // TODO : change to 0
+    proc->left_time = 0; // TODO : change to 0
 
     list_elem_init(&proc->waitqueue_next);
 }
