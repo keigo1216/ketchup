@@ -2,17 +2,35 @@
 
 struct process procs[PROCS_MAX];
 struct process *current_proc;
-struct process *idle_proc;
+struct process idle_proc;
+list_t runqueue = LIST_INIT(runqueue);
+
+/*
+    Round robin method
+*/
+static struct process *scheduler(void) {
+    struct process *next = LIST_POP_FRONT(&runqueue, struct process, waitqueue_next);
+
+    // If find next process
+    if (next) {
+        return next;
+    }
+
+    // TODO : Add cheking current_proc is not destroyed
+    if (current_proc->state == PROC_RUNNABLE) {
+        return current_proc;
+    }
+
+    return &idle_proc;
+} 
 
 void yeild(void) {
     // 実行待ちになっているプロセスを探す
-    struct process *next_proc = idle_proc;
-    for (int i = 0; i < PROCS_MAX; i++) {
-        struct process *proc = &procs[(current_proc->pid + i) % PROCS_MAX];
-        if (proc->state == PROC_RUNNABLE && proc->pid > 0) {
-            next_proc = proc;
-            break;
-        }
+    struct process *prev_proc = current_proc;
+    struct process *next_proc = scheduler();
+
+    if (next_proc != &idle_proc) {
+        next_proc->left_time = INIT_TIME_QUANTUM;
     }
     
     // 実行待ちのプロセスが存在しなかったら譲らずに実行を続ける
@@ -20,12 +38,17 @@ void yeild(void) {
         return;
     }
 
+    if (prev_proc->state == PROC_RUNNABLE) {
+        list_push_back(&runqueue, &prev_proc->waitqueue_next);
+    }
+
     /*
         コンテキストスイッチ
     */
-    struct process *prev_proc = current_proc;
     current_proc = next_proc;
     printf("switch from %d to %d\n", prev_proc->pid, next_proc->pid);
+
+    // TODO : split hardware dependent code
     // ユーザ空間用のページテーブルを入れ替える
     // To do: ユーザー空間を作るときにこの部分を実装する（無効なページテーブルを指定してしまうとプログラムが動かなくなる）
     set_ttrbr0_el1(((uint64_t)next_proc->page_table - KERNEL_BASE_ADDR));
@@ -66,21 +89,9 @@ void start_task(void) {
     );
 }
 
-struct process *create_process(const void *image, size_t image_size) {
-    // 空いているプロセス構造体を探す
-    struct process *proc = NULL;
-    int i;
-    for (i = 0; i < PROCS_MAX; i++) {
-        if (procs[i].state == PROC_UNUSED) {
-            proc = &procs[i];
-            break;
-        }
-    }
-
-    if (!proc) {
-        PANIC("no free process slots");
-    }
-
+void init_process_struct(struct process *proc, int pid, const void *image, size_t image_size) {
+    // TODO : split hardware dependent code
+    // initialize stack pointer for new process
     uint64_t *sp = (uint64_t *) &proc->stack[sizeof(proc->stack)];
     *(--sp) = (uint64_t)USER_BASE; // プログラムカウンタ
     *(--sp) = 0;  // X19
@@ -96,6 +107,8 @@ struct process *create_process(const void *image, size_t image_size) {
     *(--sp) = 0;  // X29
     *(--sp) = (uint64_t) start_task;  // X30 (LR)　retでのリターンアドレスを入れるところ
 
+    // TODO : no need to set user page to idel process
+    // map page for user space
     uint64_t *page_table = (uint64_t *)alloc_pages(1);
     // ユーザーのページをマッピングする
     for (usize64_t off = 0; off < image_size; off += PAGE_SIZE) {
@@ -107,12 +120,45 @@ struct process *create_process(const void *image, size_t image_size) {
 
     // printf("page_table = %x\n", page_table);
 
-    proc->pid = i + 1;
-    proc->state = PROC_RUNNABLE;
+    // Initialize process struct
+    proc->pid = pid;
+    proc->state = PROC_BLOCKED;
     proc->wait_for = IPC_ANY;
     proc->sp = (uint64_t) sp;
     proc->page_table = page_table;
-    proc->left_time = INIT_TIME_QUANTUM;
+    proc->left_time = 0;
+
+    list_elem_init(&proc->waitqueue_next);
+}
+
+/*
+    alloc pid (range 1 to PROCS_MAX)
+    when return 0, it is error
+*/
+static process_t alloc_pid(void) {
+    for (process_t pid = 0; pid < PROCS_MAX; pid++ ) {
+        if (procs[pid].state == PROC_UNUSED) {
+            return pid + 1;
+        }
+    }
+
+    return 0; // error
+}
+
+struct process *process_create(const void *image, size_t image_size) {
+    process_t pid = alloc_pid();
+    if (!pid) {
+        PANIC("no free process slots");
+    }
+
+    struct process *proc = &procs[pid-1];
+
+    init_process_struct(proc, pid, image, image_size);
+    // TODO : error handling
+
+    process_resume(proc);
+    
+    // TODO : return pid
     return proc;
 }
 
@@ -122,13 +168,8 @@ void process_block(struct process *proc) {
 
 void process_resume(struct process *proc) {
     proc -> state = PROC_RUNNABLE;
-    
-    // add process list waiting for run
-    for (int i = 0; i < PROCS_MAX; i++) {
-        if (procs[i].state == PROC_UNUSED) {
-            
-        }
-    }
+
+    list_push_back(&runqueue, &proc->waitqueue_next);
 }
 
 void handle_timer_irq(void) {

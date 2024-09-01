@@ -1,6 +1,7 @@
 #pragma once
 
 typedef int bool;
+typedef int process_t;
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
@@ -9,6 +10,8 @@ typedef uint64_t size_t;
 typedef uint64_t paddr_t;
 typedef uint64_t vaddr_t;
 typedef uint64_t usize64_t;
+
+#define __noreturn __attribute__((noreturn))
 
 #define true 1
 #define false 0
