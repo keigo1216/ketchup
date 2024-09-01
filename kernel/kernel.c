@@ -42,6 +42,19 @@ void handle_syscall(int sysno, int arg1, int arg2, int arg3, int arg4, int arg5,
     }
 }
 
+__noreturn static void idel_process(void) {
+    for (;;) {
+        yeild(); // switch to other task
+        
+        // TODO : unlock kernel 
+
+        // TODO : enable interrupt
+        // TODO : nop?
+
+        // TODO : lock kernel
+    }
+}
+
 void kernel_main() {
     unsigned int core_id = get_core_id();
     if (core_id == 0) {
@@ -82,8 +95,9 @@ void kernel_main() {
         process_create(_binary_shell_bin_start, (size_t)(_binary_shell_bin_end - _binary_shell_bin_start));
         yeild();
 
-        PANIC("booted!");
-        PANIC("unreachable");
+        // PANIC("booted!");
+        // PANIC("unreachable");
+        idel_process();
     } else {
         while(1) {}
     }

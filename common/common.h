@@ -10,6 +10,8 @@ typedef uint64_t paddr_t;
 typedef uint64_t vaddr_t;
 typedef uint64_t usize64_t;
 
+#define __noreturn __attribute__((noreturn))
+
 #define true 1
 #define false 0
 #define NULL ((void *)0)

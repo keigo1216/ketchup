@@ -21,7 +21,6 @@ static struct process *scheduler(void) {
         return current_proc;
     }
 
-    printf("idel proc\n");
     return &idle_proc;
 } 
 
