@@ -5,7 +5,7 @@
 #include "print.h"
 #include "alloc.h"
 #include "asm.h"
-#include "common.h"
+#include "list.h"
 
 #define USER_BASE 0x1000000
 
@@ -17,6 +17,8 @@ struct process {
     uint64_t *page_table;   // ページテーブル   
     uint8_t stack[8192];    // カーネルスタック
     uint32_t left_time;     // 残り実行時間
+
+    list_elem_t waitqueue_next; // use runqeueue and sender queueu element
 };
 
 void yeild(void);
@@ -24,14 +26,17 @@ void yeild(void);
 __attribute__((naked))
 void switch_context (uint64_t *prev_sp, uint64_t *next_sp);
 
+void init_process_struct(struct process *proc, int pid, const void *image, size_t image_size);
+struct process *process_create(const void *image, size_t image_size);
 struct process *create_process(const void *image, size_t image_size);
 
 void process_block(struct process *proc);
+void process_resume(struct process *proc);
 
 void handle_timer_irq(void);
 
 extern struct process procs[PROCS_MAX];
 extern struct process *current_proc;
-extern struct process *idle_proc;
+extern struct process idle_proc;
 
 #endif // __PROCESS_H__
