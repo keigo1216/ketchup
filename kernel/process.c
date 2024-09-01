@@ -28,15 +28,7 @@ void yeild(void) {
     // 実行待ちになっているプロセスを探す
     struct process *prev_proc = current_proc;
     struct process *next_proc = scheduler();
-    // for (int i = 0; i < PROCS_MAX; i++) {
-    //     struct process *proc = &procs[(current_proc->pid + i) % PROCS_MAX];
-    //     if (proc->state == PROC_RUNNABLE && proc->pid > 0) {
-    //         next_proc = proc;
-    //         break;
-    //     }
-    // }
 
-    // TODO : add cpu time to next_proc
     if (next_proc != &idle_proc) {
         next_proc->left_time = INIT_TIME_QUANTUM;
     }
@@ -134,12 +126,13 @@ void init_process_struct(struct process *proc, int pid, const void *image, size_
     proc->wait_for = IPC_ANY;
     proc->sp = (uint64_t) sp;
     proc->page_table = page_table;
-    proc->left_time = 0; // TODO : change to 0
+    proc->left_time = 0;
 
     list_elem_init(&proc->waitqueue_next);
 }
 
 struct process *process_create(const void *image, size_t image_size) {
+    // TODO : split to other func
     // Get process id
     struct process *proc = NULL;
     int i;
@@ -161,63 +154,6 @@ struct process *process_create(const void *image, size_t image_size) {
     process_resume(proc);
     
     // TODO : return pid
-    return proc;
-}
-
-struct process *create_process(const void *image, size_t image_size) {
-    // 空いているプロセス構造体を探す
-    struct process *proc = NULL;
-    int i;
-    for (i = 0; i < PROCS_MAX; i++) {
-        if (procs[i].state == PROC_UNUSED) {
-            proc = &procs[i];
-            break;
-        }
-    }
-
-    if (!proc) {
-        PANIC("no free process slots");
-    }
-
-    uint64_t *sp = (uint64_t *) &proc->stack[sizeof(proc->stack)];
-    *(--sp) = (uint64_t)USER_BASE; // プログラムカウンタ
-    *(--sp) = 0;  // X19
-    *(--sp) = 0;  // X20
-    *(--sp) = 0;  // X21
-    *(--sp) = 0;  // X22
-    *(--sp) = 0;  // X23
-    *(--sp) = 0;  // X24
-    *(--sp) = 0;  // X25
-    *(--sp) = 0;  // X26
-    *(--sp) = 0;  // X27
-    *(--sp) = 0;  // X28
-    *(--sp) = 0;  // X29
-    *(--sp) = (uint64_t) start_task;  // X30 (LR)　retでのリターンアドレスを入れるところ
-
-    uint64_t *page_table = (uint64_t *)alloc_pages(1);
-    // ユーザーのページをマッピングする
-    for (usize64_t off = 0; off < image_size; off += PAGE_SIZE) {
-        paddr_t page = alloc_pages(1);
-        // printf("page = %x\n", page);
-        memcpy((void *)page, image + off, PAGE_SIZE);
-        map_page(page_table, USER_BASE + off, page, PAGE_RW | PAGE_ACCESS);
-    }
-
-    // printf("page_table = %x\n", page_table);
-
-    // Initialize process struct
-    proc->pid = i + 1;
-    proc->state = PROC_RUNNABLE;
-    proc->wait_for = IPC_ANY;
-    proc->sp = (uint64_t) sp;
-    proc->page_table = page_table;
-    proc->left_time = INIT_TIME_QUANTUM;
-
-    list_elem_init(&proc->waitqueue_next);
-
-    // Add runqueue
-    list_push_back(&runqueue, &proc->waitqueue_next);
-
     return proc;
 }
 
