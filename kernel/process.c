@@ -121,7 +121,7 @@ void init_process_struct(struct process *proc, int pid, const void *image, size_
     // printf("page_table = %x\n", page_table);
 
     // Initialize process struct
-    proc->pid = pid + 1;
+    proc->pid = pid;
     proc->state = PROC_BLOCKED;
     proc->wait_for = IPC_ANY;
     proc->sp = (uint64_t) sp;
@@ -131,24 +131,29 @@ void init_process_struct(struct process *proc, int pid, const void *image, size_
     list_elem_init(&proc->waitqueue_next);
 }
 
-struct process *process_create(const void *image, size_t image_size) {
-    // TODO : split to other func
-    // Get process id
-    struct process *proc = NULL;
-    int i;
-    for (i = 0; i < PROCS_MAX; i++) {
-        if (procs[i].state == PROC_UNUSED) {
-            proc = &procs[i];
-            break;
+/*
+    alloc pid (range 1 to PROCS_MAX)
+    when return 0, it is error
+*/
+static process_t alloc_pid(void) {
+    for (process_t pid = 0; pid < PROCS_MAX; pid++ ) {
+        if (procs[pid].state == PROC_UNUSED) {
+            return pid + 1;
         }
     }
 
-    // TODO : return error
-    if (!proc) {
+    return 0; // error
+}
+
+struct process *process_create(const void *image, size_t image_size) {
+    process_t pid = alloc_pid();
+    if (!pid) {
         PANIC("no free process slots");
     }
 
-    init_process_struct(proc, i, image, image_size);
+    struct process *proc = &procs[pid-1];
+
+    init_process_struct(proc, pid, image, image_size);
     // TODO : error handling
 
     process_resume(proc);
