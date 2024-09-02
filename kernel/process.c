@@ -50,7 +50,7 @@ void yeild(void) {
 
     // TODO : split hardware dependent code
     // ユーザ空間用のページテーブルを入れ替える
-    // To do: ユーザー空間を作るときにこの部分を実装する（無効なページテーブルを指定してしまうとプログラムが動かなくなる）
+    // TODO : ユーザー空間を作るときにこの部分を実装する（無効なページテーブルを指定してしまうとプログラムが動かなくなる）
     set_ttrbr0_el1(((uint64_t)next_proc->page_table - KERNEL_BASE_ADDR));
     switch_context(&prev_proc->sp, &next_proc->sp);
 }
@@ -128,6 +128,7 @@ void init_process_struct(struct process *proc, int pid, const void *image, size_
     proc->page_table = page_table;
     proc->left_time = 0;
 
+    list_init(&proc->senders);
     list_elem_init(&proc->waitqueue_next);
 }
 

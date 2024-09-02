@@ -6,6 +6,7 @@
 #include "alloc.h"
 #include "asm.h"
 #include "list.h"
+#include "message.h"
 
 #define USER_BASE 0x1000000
 
@@ -18,7 +19,9 @@ struct process {
     uint8_t stack[8192];    // カーネルスタック
     uint32_t left_time;     // 残り実行時間
 
+    list_t senders;
     list_elem_t waitqueue_next; // use runqeueue and sender queueu element
+    struct message m;
 };
 
 void yeild(void);

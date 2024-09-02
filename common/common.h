@@ -43,12 +43,16 @@ typedef uint64_t usize64_t;
 /* process.wait_for state */
 #define IPC_ANY -1
 #define IPC_NO_WAIT 0
+#define IPC_DENY -1
 
 /* IPC flag */
+// TODO : split value and position
 #define IPC_SEND   (1 << 0)
 #define IPC_RECV   (1 << 1)
-#define IPC_KERNEL (0 << 2)
-#define IPC_USER   (1 << 2)
+#define IPC_KERNEL (1 << 2)
+#define IPC_NOBLOCK (1 << 3)
+
+#define FROM_KERNEL -1
 
 void *memset(void *buf, char c, size_t n);
 void *memcpy(void *dst, const void *src, size_t n);

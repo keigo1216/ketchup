@@ -10,4 +10,4 @@ static void send_message(struct process *dst, struct message *m, unsigned char f
 /*
     receive message `m` from process `src` with flags `flags`
 */
-static void recv_message(unsigned int src, struct message *m, unsigned char flags);
+static void recv_message(process_t src, struct message *m, unsigned char flags);
