@@ -40,6 +40,7 @@ typedef uint64_t usize64_t;
 
 #define SYS_PUTCHAR 1
 #define SYS_MAP_PAGE 2
+#define SYS_CREATE_PROCESS 3
 
 /* process.wait_for state */
 #define IPC_ANY -1

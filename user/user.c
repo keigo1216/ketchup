@@ -6,7 +6,7 @@ __attribute__((noreturn)) void exit(void) {
     for (;;);
 }
 
-int syscall(int sysno, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
+int syscall(uint64_t sysno, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
     register uint64_t x0 __asm__("x0") = sysno;
     register uint64_t x1 __asm__("x1") = arg1;
     register uint64_t x2 __asm__("x2") = arg2;
@@ -27,6 +27,10 @@ int syscall(int sysno, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg
 
 void putchar(char c) {
     syscall(SYS_PUTCHAR, c, 0, 0, 0, 0, 0);
+}
+
+process_t process_create() {
+    return syscall(SYS_CREATE_PROCESS, 0, 0, 0, 0, 0, 0);
 }
 
 void map_page(process_t pid, uint64_t vaddr, uint64_t paddr, uint64_t flags) {

@@ -139,7 +139,7 @@ static process_t alloc_pid(void) {
     return 0; // error
 }
 
-struct process *process_create() {
+process_t process_create() {
     process_t pid = alloc_pid();
     if (!pid) {
         PANIC("no free process slots");
@@ -153,7 +153,7 @@ struct process *process_create() {
     process_resume(proc);
     
     // TODO : return pid
-    return proc;
+    return pid;
 }
 
 void process_block(struct process *proc) {

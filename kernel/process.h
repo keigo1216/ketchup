@@ -30,7 +30,7 @@ __attribute__((naked))
 void switch_context (uint64_t *prev_sp, uint64_t *next_sp);
 
 void init_process_struct(struct process *proc, int pid);
-struct process *process_create();
+process_t process_create();
 
 void process_block(struct process *proc);
 void process_resume(struct process *proc);
