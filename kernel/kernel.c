@@ -89,7 +89,7 @@ void kernel_main() {
         // current_proc = idle_proc;
 
         // initialize idel process
-        init_process_struct(&idle_proc, -1, NULL, 0);
+        init_process_struct(&idle_proc, -1);
         current_proc = &idle_proc;
 
         // paddr_t paddr0 = alloc_pages(2);
@@ -102,8 +102,23 @@ void kernel_main() {
         
         // test_list_macro();
 
-        process_create(_binary_shell_bin_start, (size_t)(_binary_shell_bin_end - _binary_shell_bin_start));        
-        process_create(_binary_shell_bin_start, (size_t)(_binary_shell_bin_end - _binary_shell_bin_start));
+
+        struct process *proc_a = process_create();        
+        struct process *proc_b =  process_create();
+        // map page
+        for (usize64_t off = 0; off < (size_t)(_binary_shell_bin_end - _binary_shell_bin_start); off += PAGE_SIZE) {
+            paddr_t page = alloc_pages(1);
+            // printf("page = %x\n", page);
+            memcpy((void *)page, _binary_shell_bin_start + off, PAGE_SIZE);
+            vm_map(proc_a, USER_BASE + off, page, PAGE_RW | PAGE_ACCESS);
+        }
+        for (usize64_t off = 0; off < (size_t)(_binary_shell_bin_end - _binary_shell_bin_start); off += PAGE_SIZE) {
+            paddr_t page = alloc_pages(1);
+            // printf("page = %x\n", page);
+            memcpy((void *)page, _binary_shell_bin_start + off, PAGE_SIZE);
+            vm_map(proc_b, USER_BASE + off, page, PAGE_RW | PAGE_ACCESS);
+        }
+
         yeild();
 
         // PANIC("booted!");

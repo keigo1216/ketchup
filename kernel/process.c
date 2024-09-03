@@ -89,7 +89,7 @@ void start_task(void) {
     );
 }
 
-void init_process_struct(struct process *proc, int pid, const void *image, size_t image_size) {
+void init_process_struct(struct process *proc, int pid) {
     // TODO : split hardware dependent code
     // initialize stack pointer for new process
     uint64_t *sp = (uint64_t *) &proc->stack[sizeof(proc->stack)];
@@ -123,14 +123,6 @@ void init_process_struct(struct process *proc, int pid, const void *image, size_
 
     list_init(&proc->senders);
     list_elem_init(&proc->waitqueue_next);
-
-    // ユーザーのページをマッピングする
-    for (usize64_t off = 0; off < image_size; off += PAGE_SIZE) {
-        paddr_t page = alloc_pages(1);
-        // printf("page = %x\n", page);
-        memcpy((void *)page, image + off, PAGE_SIZE);
-        vm_map(proc, USER_BASE + off, page, PAGE_RW | PAGE_ACCESS);
-    }
 }
 
 /*
@@ -147,7 +139,7 @@ static process_t alloc_pid(void) {
     return 0; // error
 }
 
-struct process *process_create(const void *image, size_t image_size) {
+struct process *process_create() {
     process_t pid = alloc_pid();
     if (!pid) {
         PANIC("no free process slots");
@@ -155,7 +147,7 @@ struct process *process_create(const void *image, size_t image_size) {
 
     struct process *proc = &procs[pid-1];
 
-    init_process_struct(proc, pid, image, image_size);
+    init_process_struct(proc, pid);
     // TODO : error handling
 
     process_resume(proc);
