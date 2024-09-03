@@ -30,9 +30,8 @@ void proc_b_entry(void) {
     }
 }
 
-process_t sys_process_create() {
-    printf("call !!!!");
-    return process_create();
+process_t sys_process_create(uint64_t kernel_entry) {
+    return process_create(kernel_entry);
 }
 
 void sys_vm_map(process_t pid, uint64_t vaddr, uint64_t paddr, uint64_t flags) {
@@ -53,7 +52,7 @@ uint64_t handle_syscall(uint64_t sysno, uint64_t arg1, uint64_t arg2, uint64_t a
             sys_vm_map((process_t)arg1, arg2, arg3, arg4);
             return 0; // TODO : return success code
         case SYS_CREATE_PROCESS:
-            return sys_process_create();
+            return sys_process_create(arg1);
         default:
             PANIC("unknown syscall: sysno=%d\n", sysno);
             return 0; // TODO : return success code
@@ -96,7 +95,7 @@ void kernel_main() {
         // current_proc = idle_proc;
 
         // initialize idel process
-        init_process_struct(&idle_proc, -1);
+        init_process_struct(&idle_proc, -1, NULL);
         current_proc = &idle_proc;
 
         // paddr_t paddr0 = alloc_pages(2);
@@ -110,8 +109,8 @@ void kernel_main() {
         // test_list_macro();
 
 
-        process_t id_a = process_create();        
-        process_t id_b =  process_create();
+        process_t id_a = process_create(USER_BASE);        
+        process_t id_b =  process_create(USER_BASE);
         struct process *proc_a = process_find(id_a);
         struct process *proc_b = process_find(id_b);
         // map page
