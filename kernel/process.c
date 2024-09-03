@@ -89,7 +89,7 @@ void start_task(void) {
     );
 }
 
-void init_process_struct(struct process *proc, int pid) {
+void init_process_struct(struct process *proc, int pid, uint64_t kernel_entry) {
     // TODO : split hardware dependent code
     // initialize stack pointer for new process
     uint64_t *sp = (uint64_t *) &proc->stack[sizeof(proc->stack)];
@@ -139,7 +139,7 @@ static process_t alloc_pid(void) {
     return 0; // error
 }
 
-process_t process_create() {
+process_t process_create(uint64_t kernel_entry) {
     process_t pid = alloc_pid();
     if (!pid) {
         PANIC("no free process slots");
@@ -147,7 +147,7 @@ process_t process_create() {
 
     struct process *proc = &procs[pid-1];
 
-    init_process_struct(proc, pid);
+    init_process_struct(proc, pid, kernel_entry);
     // TODO : error handling
 
     process_resume(proc);

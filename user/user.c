@@ -29,8 +29,8 @@ void putchar(char c) {
     syscall(SYS_PUTCHAR, c, 0, 0, 0, 0, 0);
 }
 
-process_t process_create() {
-    return syscall(SYS_CREATE_PROCESS, 0, 0, 0, 0, 0, 0);
+process_t process_create(uint64_t kernel_entry) {
+    return syscall(SYS_CREATE_PROCESS, kernel_entry, 0, 0, 0, 0, 0);
 }
 
 void map_page(process_t pid, uint64_t vaddr, uint64_t paddr, uint64_t flags) {
