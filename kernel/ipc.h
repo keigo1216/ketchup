@@ -1,3 +1,4 @@
+#pragma once
 #include "message.h"
 #include "process.h"
 #include "common.h"

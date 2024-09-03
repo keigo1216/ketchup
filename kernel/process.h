@@ -29,11 +29,12 @@ void yeild(void);
 __attribute__((naked))
 void switch_context (uint64_t *prev_sp, uint64_t *next_sp);
 
-void init_process_struct(struct process *proc, int pid, const void *image, size_t image_size);
-struct process *process_create(const void *image, size_t image_size);
+void init_process_struct(struct process *proc, int pid);
+process_t process_create();
 
 void process_block(struct process *proc);
 void process_resume(struct process *proc);
+struct process *process_find(process_t pid);
 
 void handle_timer_irq(void);
 
