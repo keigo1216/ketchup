@@ -13,12 +13,15 @@ paddr_t alloc_pages(uint32_t n) {
     return paddr;
 }
 
-void map_page(
-    uint64_t *table0,
+void vm_map(
+    struct process *proc,
     uint64_t vaddr,
     uint64_t paddr,
-    uint64_t flags
-) { 
+    uint64_t flags 
+) {
+    // page table pointer
+    uint64_t *table0 = proc->page_table;
+
     if (!is_aligned(vaddr, PAGE_SIZE)) {
         PANIC("vaddr must be aligned by page size");
     }
