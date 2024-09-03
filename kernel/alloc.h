@@ -4,11 +4,26 @@
 #include "common.h"
 #include "print.h"
 #include "armv8def.h"
+#include "process.h"
 
 // #define KERNEL_BASE_ADDR 0xffff000000000000
 
 paddr_t alloc_pages(uint32_t n);
 
+/*
+    * map page to page table
+    *
+    * @param proc current process 
+    * @param vaddr 
+    * @param paddr
+    * @param flags
+*/
+void vm_map(
+    struct process *proc,
+    uint64_t vaddr,
+    uint64_t paddr,
+    uint64_t flags 
+);
 
 /*
     * ページテーブルにページをマップする

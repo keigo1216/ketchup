@@ -110,13 +110,6 @@ void init_process_struct(struct process *proc, int pid, const void *image, size_
     // TODO : no need to set user page to idel process
     // map page for user space
     uint64_t *page_table = (uint64_t *)alloc_pages(1);
-    // ユーザーのページをマッピングする
-    for (usize64_t off = 0; off < image_size; off += PAGE_SIZE) {
-        paddr_t page = alloc_pages(1);
-        // printf("page = %x\n", page);
-        memcpy((void *)page, image + off, PAGE_SIZE);
-        map_page(page_table, USER_BASE + off, page, PAGE_RW | PAGE_ACCESS);
-    }
 
     // printf("page_table = %x\n", page_table);
 
@@ -130,6 +123,14 @@ void init_process_struct(struct process *proc, int pid, const void *image, size_
 
     list_init(&proc->senders);
     list_elem_init(&proc->waitqueue_next);
+
+    // ユーザーのページをマッピングする
+    for (usize64_t off = 0; off < image_size; off += PAGE_SIZE) {
+        paddr_t page = alloc_pages(1);
+        // printf("page = %x\n", page);
+        memcpy((void *)page, image + off, PAGE_SIZE);
+        vm_map(proc, USER_BASE + off, page, PAGE_RW | PAGE_ACCESS);
+    }
 }
 
 /*
@@ -171,6 +172,15 @@ void process_resume(struct process *proc) {
     proc -> state = PROC_RUNNABLE;
 
     list_push_back(&runqueue, &proc->waitqueue_next);
+}
+
+struct process *process_find(process_t pid) {
+    if (pid <= 0 && pid > PROCS_MAX) {
+        // TODO : return error
+        PANIC("invalid pid");
+    }
+
+    return &procs[pid - 1];
 }
 
 void handle_timer_irq(void) {

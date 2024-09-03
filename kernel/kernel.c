@@ -30,11 +30,22 @@ void proc_b_entry(void) {
     }
 }
 
+void sys_vm_map(process_t pid, uint64_t vaddr, uint64_t paddr, uint64_t flags) {
+    // Get process structure using pid
+    struct process *proc = process_find(pid);
 
-void handle_syscall(int sysno, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6) {
+    // TODO : Check paddr is available
+
+    vm_map(proc, vaddr, paddr, flags);
+}
+
+void handle_syscall(int sysno, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5, uint64_t arg6) {
     switch (sysno) {
         case SYS_PUTCHAR:
             putchar(arg1);
+            break;
+        case SYS_MAP_PAGE:
+            sys_vm_map((process_t)arg1, arg2, arg3, arg4);
             break;
         default:
             PANIC("unknown syscall: sysno=%d\n", sysno);

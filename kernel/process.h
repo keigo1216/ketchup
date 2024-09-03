@@ -34,6 +34,7 @@ struct process *process_create(const void *image, size_t image_size);
 
 void process_block(struct process *proc);
 void process_resume(struct process *proc);
+struct process *process_find(process_t pid);
 
 void handle_timer_irq(void);
 
