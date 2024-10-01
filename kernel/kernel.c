@@ -110,9 +110,9 @@ void kernel_main() {
 
 
         process_t id_a = process_create(USER_BASE);        
-        process_t id_b =  process_create(USER_BASE);
+        // process_t id_b =  process_create(USER_BASE);
         struct process *proc_a = process_find(id_a);
-        struct process *proc_b = process_find(id_b);
+        // struct process *proc_b = process_find(id_b);
         // map page
         for (usize64_t off = 0; off < (size_t)(_binary_shell_bin_end - _binary_shell_bin_start); off += PAGE_SIZE) {
             paddr_t page = alloc_pages(1);
@@ -120,12 +120,12 @@ void kernel_main() {
             memcpy((void *)page, _binary_shell_bin_start + off, PAGE_SIZE);
             vm_map(proc_a, USER_BASE + off, page, PAGE_RW | PAGE_ACCESS);
         }
-        for (usize64_t off = 0; off < (size_t)(_binary_shell_bin_end - _binary_shell_bin_start); off += PAGE_SIZE) {
-            paddr_t page = alloc_pages(1);
-            // printf("page = %x\n", page);
-            memcpy((void *)page, _binary_shell_bin_start + off, PAGE_SIZE);
-            vm_map(proc_b, USER_BASE + off, page, PAGE_RW | PAGE_ACCESS);
-        }
+        // for (usize64_t off = 0; off < (size_t)(_binary_shell_bin_end - _binary_shell_bin_start); off += PAGE_SIZE) {
+        //     paddr_t page = alloc_pages(1);
+        //     // printf("page = %x\n", page);
+        //     memcpy((void *)page, _binary_shell_bin_start + off, PAGE_SIZE);
+        //     vm_map(proc_b, USER_BASE + off, page, PAGE_RW | PAGE_ACCESS);
+        // }
 
         yeild();
 

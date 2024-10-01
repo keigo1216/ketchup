@@ -93,7 +93,7 @@ void init_process_struct(struct process *proc, int pid, uint64_t kernel_entry) {
     // TODO : split hardware dependent code
     // initialize stack pointer for new process
     uint64_t *sp = (uint64_t *) &proc->stack[sizeof(proc->stack)];
-    *(--sp) = (uint64_t)USER_BASE; // プログラムカウンタ
+    *(--sp) = (uint64_t)kernel_entry; // プログラムカウンタ
     *(--sp) = 0;  // X19
     *(--sp) = 0;  // X20
     *(--sp) = 0;  // X21
